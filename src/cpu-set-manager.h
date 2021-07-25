@@ -20,18 +20,28 @@
 #ifndef _CPU_SET_MANAGER_H_
 #define _CPU_SET_MANAGER_H_
 
+#include "common.h"
+
 class CpuSetManager
 {
 public:
 	CpuSetManager(int nworkcpu);
-	int isolate();
+	~CpuSetManager();
+	void isolate();
+	int grab();
 	void release(int cpuid);
 
 protected:
 
 private:
 	int ncpu, nworkcpu;
+	std::vector<int> idle_cpus;
+	std::queue<int> ready_cpus;
+	int nwaiting_tasks;
+	std::mutex mutex;
+	std::condition_variable cv;
+
+	void makeReady(int);
 };
 
 #endif // _CPU_SET_MANAGER_H_
-

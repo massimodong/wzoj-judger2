@@ -20,7 +20,11 @@
 #ifndef _COMMON_H_
 #define _COMMON_H_
 
+#include <assert.h>
 #include <unistd.h>
+#include <sys/stat.h>
+#include <sys/mount.h>
+
 #include <glog/logging.h>
 #include <queue>
 #include <set>
@@ -30,6 +34,8 @@
 #include <condition_variable>
 
 extern volatile bool OJ_RUNNING;
+
+extern const char *OJ_HOME;
 extern int OJ_SLEEP_TIME;
 extern int OJ_CNT_WORKERS;
 extern const char *OJ_URL;
@@ -37,5 +43,10 @@ extern const char *OJ_TOKEN;
 
 const uint64_t STD_MB = 1048576;
 const int OJ_PROBLEM_TYPE_SUBMIT_SOLUTION = 3;
+
+#define safecall_err(err, fun, ...) if(fun(__VA_ARGS__) == err)\
+  LOG(FATAL)<<#fun<<" "<<#__VA_ARGS__<<": "<<strerror(errno);
+
+#define safecall(fun, ...) safecall_err(-1, fun, __VA_ARGS__)
 
 #endif // _COMMON_H_

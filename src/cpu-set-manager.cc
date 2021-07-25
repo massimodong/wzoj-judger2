@@ -23,6 +23,7 @@
 #include <sys/sysinfo.h>
 
 CpuSetManager::CpuSetManager(int nworkcpu):nworkcpu(nworkcpu){
+	std::lock_guard<std::mutex> lk(mutex);
 	ncpu = get_nprocs();
 
 	if(nworkcpu <= 0){
@@ -33,17 +34,51 @@ CpuSetManager::CpuSetManager(int nworkcpu):nworkcpu(nworkcpu){
 	
 	LOG(INFO)<<"There are total "<<ncpu<<" cpus";
 	LOG(INFO)<<"Using "<<nworkcpu<<" cpus as working cpu";
+
+	if(mkdir("/dev/cpuset", S_IRWXU))
+		LOG(FATAL)<<"Failed creating directory /dev/cpuset: "
+				  <<strerror(errno)<<"\n"
+				  <<"Probably another process is using cpuset?";
+
+	safecall(mount, "cputset", "/dev/cpuset", "cpuset", 0, NULL);
+
+	for(int i=0;i<nworkcpu;++i) idle_cpus.emplace_back(i);
+	nwaiting_tasks = 0;
 };
 
-int CpuSetManager::isolate()
-{
-	return 0;
+CpuSetManager::~CpuSetManager(){
+	std::lock_guard<std::mutex> lk(mutex);
+	safecall(umount, "/dev/cpuset");
+	safecall(rmdir, "/dev/cpuset");
 }
 
-void CpuSetManager::release(int cpuid)
-{
-	// TODO: Add implementation here
+void CpuSetManager::isolate(){
 }
 
+int CpuSetManager::grab(){
+	std::unique_lock<std::mutex> lk(mutex);
+	++nwaiting_tasks;
+	cv.wait(lk, [this]{return !idle_cpus.empty() || !ready_cpus.empty();});
 
+	if(ready_cpus.empty()){
+		int n = std::min((int)idle_cpus.size(), nwaiting_tasks);
+		makeReady(n);
+	}
+
+	assert(!ready_cpus.empty());
+	int ret = ready_cpus.front();
+	ready_cpus.pop();
+	--nwaiting_tasks;
+	return ret;
+}
+
+void CpuSetManager::release(int cpuid){
+	std::unique_lock<std::mutex> lk(mutex);
+}
+
+void CpuSetManager::makeReady(int n){
+	for(int i=0;i<n;++i){
+		ready_cpus.push(idle_cpus.)
+	}
+}
 

@@ -52,7 +52,7 @@ static size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp){
 Json::Value Http::raw_post(std::string url, std::string data, bool isPost){
 	long code;
 	std::string ret_str;
-	while(true){
+	while(OJ_RUNNING){
 		CURL *curl = curl_easy_init();
 		if(!curl){
 			LOG(WARNING)<<"curl_easy_init failed, retrying.";
@@ -116,6 +116,7 @@ Json::Value Http::raw_post(std::string url, std::string data, bool isPost){
 				break;
 		}
 	}
+	return Json::Value();
 }
 
 Json::Value Http::get(std::string url, std::map<std::string,std::string> par){

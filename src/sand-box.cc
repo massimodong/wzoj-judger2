@@ -26,7 +26,7 @@ const static int COMPILE_FILE_SIZE = 10 * STD_MB;
 const static int COMPILE_MEMORY = 256 * STD_MB;
 
 void SandBox::start(const char *path){
-	cd(path);
+	safecall(chdir, path);
 }
 
 bool SandBox::compile(const Solution &solution){
@@ -38,16 +38,10 @@ bool SandBox::compile(const Solution &solution){
 
 	pid_t pid = fork_safe();
 	if(pid == 0){
-		cd("./compile");
+		safecall(chdir, "./compile");
 		prepare_compile_files(solution);
 		setlimits(COMPILE_TIME, COMPILE_MEMORY, COMPILE_FILE_SIZE);
 	}else{
-	}
-}
-
-void SandBox::cd(const char *path){
-	if(chdir(path)){
-		LOG(FATAL)<<"chdir to "<<path<<" failed";
 	}
 }
 

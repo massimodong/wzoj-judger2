@@ -31,7 +31,6 @@ public:
 protected:
 
 private:
-	void cd(const char *path);
 	pid_t fork_safe();
 	void setlimits(uint64_t, uint64_t, uint64_t);
 	void prepare_compile_files(const Solution &solution);

@@ -23,6 +23,8 @@
 #include <signal.h>
 
 volatile bool OJ_RUNNING = true;
+
+const char *OJ_HOME = "/home/judger";
 int OJ_SLEEP_TIME = 1;
 int OJ_CNT_WORKERS = 1;
 const char *OJ_URL = "localhost:8080/";
@@ -42,6 +44,7 @@ void print_version(const char *name){
 
 void call_for_exit(int s){
 	OJ_RUNNING = false;
+	DLOG(WARNING)<<"Shutting down...";
 }
 
 int main(int argc, char* argv[])
@@ -78,10 +81,12 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	signal(SIGQUIT, call_for_exit);
-	signal(SIGKILL, call_for_exit);
-	signal(SIGTERM, call_for_exit);
-	signal(SIGINT, call_for_exit);
+	safecall_err(SIG_ERR, signal, SIGQUIT, call_for_exit);
+	safecall_err(SIG_ERR, signal, SIGKILL, call_for_exit);
+	safecall_err(SIG_ERR, signal, SIGTERM, call_for_exit);
+	safecall_err(SIG_ERR, signal, SIGINT, call_for_exit);
+
+	safecall(chdir, OJ_HOME);
 
 	Judger judger(nworkcpu);
 

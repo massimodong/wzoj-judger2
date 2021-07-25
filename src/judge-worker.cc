@@ -20,17 +20,16 @@
 #include "judge-worker.h"
 #include "judger.h"
 #include "solution.h"
-#include <sys/stat.h>
 
 JudgeWorker::JudgeWorker(int worker_id):worker_id(worker_id){
 	workdir = "run" + std::to_string(worker_id);
-	mkdir(workdir.c_str(), S_IRWXU);
+	safecall(mkdir, workdir.c_str(), S_IRWXU);
 	sandbox.start(workdir.c_str());
 }
 JudgeWorker::JudgeWorker(JudgeWorker&& o):workerThread(std::move(o.workerThread)){
 }
 JudgeWorker::~JudgeWorker(){
-	rmdir(workdir.c_str());
+	safecall(rmdir, workdir.c_str());
 }
 
 void JudgeWorker::startJudging(Judger &judger){
