@@ -32,7 +32,7 @@ public:
 	 bool spj;
 	 int type;
 	 
-	 void load(int);
+	 void load_real(int);
 
 protected:
 

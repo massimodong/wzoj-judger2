@@ -42,8 +42,13 @@ CpuSetManager::CpuSetManager(int nworkcpu):nworkcpu(nworkcpu){
 
 	safecall(mount, "cputset", "/dev/cpuset", "cpuset", 0, NULL);
 
+	safecall(mkdir, "/dev/cpuset/idleset", S_IRWXU);
+	//safecall(mkdir, "/dev/cpuset/")
+
 	for(int i=0;i<nworkcpu;++i) idle_cpus.emplace_back(i);
 	nwaiting_tasks = 0;
+
+	updateIdleCpus();
 };
 
 CpuSetManager::~CpuSetManager(){
@@ -62,7 +67,7 @@ int CpuSetManager::grab(){
 
 	if(ready_cpus.empty()){
 		int n = std::min((int)idle_cpus.size(), nwaiting_tasks);
-		makeReady(n);
+		idle2ready(n);
 	}
 
 	assert(!ready_cpus.empty());
@@ -74,11 +79,26 @@ int CpuSetManager::grab(){
 
 void CpuSetManager::release(int cpuid){
 	std::unique_lock<std::mutex> lk(mutex);
-}
-
-void CpuSetManager::makeReady(int n){
-	for(int i=0;i<n;++i){
-		ready_cpus.push(idle_cpus.)
+	if(nwaiting_tasks > ready_cpus.size()){
+		ready_cpus.push(cpuid);
+	}else{
+		ready2idle(cpuid);
 	}
 }
 
+void CpuSetManager::idle2ready(int n){
+	for(int i=0;i<n;++i){
+		assert(!idle_cpus.empty());
+		ready_cpus.push(*idle_cpus.rbegin());
+		idle_cpus.pop_back();
+	}
+	updateIdleCpus();
+}
+
+void CpuSetManager::ready2idle(int cpu_id){
+	idle_cpus.emplace_back(cpu_id);
+	updateIdleCpus();
+}
+
+void CpuSetManager::updateIdleCpus(){
+}

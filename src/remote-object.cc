@@ -21,9 +21,21 @@
 #include "http.h"
 #include "common.h"
 
-RemoteObject::RemoteObject():http(Http::getInstance()){
+RemoteObject::RemoteObject():http(Http::getInstance()), remoteObjectLoaded(false){
 }
 
-void RemoteObject::load(int){
+RemoteObject::~RemoteObject(){
+	if(remoteObjectLoaded) unload();
+}
+
+void RemoteObject::load(int id){
+	load_real(id);
+	remoteObjectLoaded = true;
+}
+
+void RemoteObject::load_real(int){
 	LOG(FATAL)<<"Calling a virtual function RemoteObject::load";
+}
+
+void RemoteObject::unload(){
 }

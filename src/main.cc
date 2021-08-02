@@ -22,6 +22,8 @@
 #include <getopt.h>
 #include <signal.h>
 
+#include "hiredis.h"
+
 volatile bool OJ_RUNNING = true;
 
 const char *OJ_HOME = "/home/judger";

@@ -26,7 +26,7 @@ class SandBox
 {
 public:
 	void start(const char *path);
-	bool compile(const Solution &solution);
+	bool compile_solution(Solution &solution);
 
 protected:
 
@@ -34,6 +34,9 @@ private:
 	pid_t fork_safe();
 	void setlimits(uint64_t, uint64_t, uint64_t);
 	void prepare_compile_files(const Solution &solution);
+	void clear_compile_files();
+	bool compile(int language);
+	[[ noreturn ]] void executeCompile(int language);
 
 };
 

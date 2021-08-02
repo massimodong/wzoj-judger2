@@ -20,7 +20,7 @@
 #include "problem.h"
 #include "common.h"
 
-void Problem::load(int pid){
+void Problem::load_real(int pid){
 	std::map<std::string, std::string> par;
 	par["problem_id"] = std::to_string(pid);
 	Json::Value v = http.get("/judger/problem", par);

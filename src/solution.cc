@@ -20,7 +20,7 @@
 #include "common.h"
 #include "solution.h"
 
-void Solution::load(int sid){
+void Solution::load_real(int sid){
 	std::map<std::string, std::string> par;
 	par["solution_id"] = std::to_string(sid);
 	Json::Value v = http.get("/judger/solution", par);
@@ -38,7 +38,30 @@ void Solution::load(int sid){
 	ce = v["ce"].asString();
 	cnt_testcases = v["cnt_testcases"].asInt();
 
+	safecall(asprintf, &datadir, "%s/data/%d", OJ_HOME, id);
+	switch(language){
+		case OJ_LANGUAGE_C:
+			loadC();
+			break;
+		case OJ_LANGUAGE_CPP:
+			loadCPP();
+			break;
+		case OJ_LANGUAGE_PASCAL:
+			loadPascal();
+			break;
+		case OJ_LANGUAGE_JAVA:
+			LOG(FATAL)<<"java currently not supported";
+			break;
+		case OJ_LANGUAGE_PYTHON:
+			LOG(FATAL)<<"python currently not supported";
+			break;
+	}
+
 	problem.load(problem_id);
+}
+
+void Solution::unload(){
+	free(datadir);
 }
 
 bool Solution::checkout(int sid, bool force){
@@ -48,4 +71,17 @@ bool Solution::checkout(int sid, bool force){
 		par["force"] = "true";
 	}
 	return http.post("/judger/checkout", par)["ok"].asBool();
+}
+
+void Solution::loadC(){
+	srcFileName = "Main.c";
+}
+
+void Solution::loadCPP(){
+	srcFileName = "Main.cc";
+}
+
+void Solution::loadPascal(){
+	if(problem.type == OJ_PROBLEM_TYPE_INTERACT) srcFileName = "solution.pas";
+	else srcFileName = "Main.pas";
 }

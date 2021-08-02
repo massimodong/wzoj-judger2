@@ -47,7 +47,7 @@ void JudgeWorker::worker(Judger &judger){
 		if(sid == -1) break;
 		if(solution.checkout(sid)){
 			solution.load(sid);
-			if(!sandbox.compile(solution)){
+			if(!sandbox.compile_solution(solution)){
 			}
 		}
 	}

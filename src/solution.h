@@ -40,12 +40,19 @@ public:
 
 	Problem problem;
 
-	void load(int);
+	char *datadir;
+	const char *srcFileName;
+
+	void load_real(int);
+	void unload();
 	bool checkout(int, bool = false);
 
 protected:
 
 private:
+	void loadC();
+	void loadCPP();
+	void loadPascal();
 
 };
 

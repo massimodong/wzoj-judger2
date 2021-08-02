@@ -26,12 +26,16 @@ class RemoteObject
 {
 public:
 	RemoteObject();
-	virtual void load(int);
+	~RemoteObject();
+	void load(int);
+	void unload();
 
 protected:
 	Http &http;
+	virtual void load_real(int);
 
 private:
+	bool remoteObjectLoaded;
 
 };
 

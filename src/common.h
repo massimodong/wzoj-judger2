@@ -23,11 +23,14 @@
 #include <assert.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
+#include <sys/types.h>
 #include <sys/mount.h>
 
 #include <glog/logging.h>
 #include <queue>
 #include <set>
+#include <fstream>
 
 #include <thread>
 #include <mutex>
@@ -41,12 +44,34 @@ extern int OJ_CNT_WORKERS;
 extern const char *OJ_URL;
 extern const char *OJ_TOKEN;
 
+const int JUDGER_UID = 1538;
+
 const uint64_t STD_MB = 1048576;
+const int OJ_LANGUAGE_C = 0;
+const int OJ_LANGUAGE_CPP = 1;
+const int OJ_LANGUAGE_PASCAL = 2;
+const int OJ_LANGUAGE_JAVA = 3;
+const int OJ_LANGUAGE_PYTHON = 4;
+const int OJ_PROBLEM_TYPE_INTERACT = 2;
 const int OJ_PROBLEM_TYPE_SUBMIT_SOLUTION = 3;
 
 #define safecall_err(err, fun, ...) if(fun(__VA_ARGS__) == err)\
   LOG(FATAL)<<#fun<<" "<<#__VA_ARGS__<<": "<<strerror(errno);
 
 #define safecall(fun, ...) safecall_err(-1, fun, __VA_ARGS__)
+
+static std::string readFile(const std::string &fileName)
+{
+    std::ifstream ifs(fileName.c_str(),
+                      std::ios::in | std::ios::binary | std::ios::ate);
+
+    std::ifstream::pos_type fileSize = ifs.tellg();
+    ifs.seekg(0, std::ios::beg);
+
+    std::vector<char> bytes(fileSize);
+    ifs.read(&bytes[0], fileSize);
+
+    return std::string(&bytes[0], fileSize);
+}
 
 #endif // _COMMON_H_

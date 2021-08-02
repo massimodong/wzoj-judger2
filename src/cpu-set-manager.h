@@ -41,7 +41,9 @@ private:
 	std::mutex mutex;
 	std::condition_variable cv;
 
-	void makeReady(int);
+	void idle2ready(int);
+	void ready2idle(int);
+	void updateIdleCpus();
 };
 
 #endif // _CPU_SET_MANAGER_H_
