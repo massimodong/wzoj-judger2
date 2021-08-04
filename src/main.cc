@@ -83,10 +83,13 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	safecall_err(SIG_ERR, signal, SIGQUIT, call_for_exit);
-	safecall_err(SIG_ERR, signal, SIGKILL, call_for_exit);
-	safecall_err(SIG_ERR, signal, SIGTERM, call_for_exit);
-	safecall_err(SIG_ERR, signal, SIGINT, call_for_exit);
+	struct sigaction new_action;
+	new_action.sa_handler = call_for_exit;
+	sigemptyset (&new_action.sa_mask);
+	new_action.sa_flags = 0;
+	safecall(sigaction, SIGQUIT, &new_action, NULL);
+	safecall(sigaction, SIGTERM, &new_action, NULL);
+	safecall(sigaction, SIGINT, &new_action, NULL);
 
 	safecall(chdir, OJ_HOME);
 

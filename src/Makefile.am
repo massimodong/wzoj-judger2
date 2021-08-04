@@ -41,6 +41,8 @@ wzoj_judger2_SOURCES = \
 	sand-box.cc \
 	sand-box.h
 
+wzoj_judger2_CXXFLAGS = -lpthread 
+
 wzoj_judger2_LDFLAGS = 
 
 wzoj_judger2_LDADD = $(WZOJ_JUDGER2_LIBS) \
