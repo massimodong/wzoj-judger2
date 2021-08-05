@@ -37,7 +37,6 @@ void print_help(const char *name){
 	printf("Options:\n");
 	printf("-h, --help\t\tDisplay help message.\n");
 	printf("-v, --version\t\tDisplay version message.\n");
-	printf("-w, --nworkcpu=<n>\tDedicate n cpus for judging.\n");
 	printf("-i, --once\t\tRun once: judge one solution and exit.\n");
 }
 
@@ -52,13 +51,11 @@ void call_for_exit(int s){
 int main(int argc, char* argv[])
 {
 	//google::InitGoogleLogging(argv[0]);
-	int nworkcpu = 1;
 	bool run_once = false;
 
 	static const struct option longopts[] = {
 		{"help", no_argument, NULL, 'h'},
 		{"version", no_argument, NULL, 'v'},
-		{"nworkcpu", required_argument, NULL, 'w'},
 		{"once", no_argument, NULL, 'i'},
 		{NULL, 0, NULL, 0},
 	};
@@ -71,9 +68,6 @@ int main(int argc, char* argv[])
 			case 'v':
 				print_version(argv[0]);
 				return 0;
-			case 'w':
-				nworkcpu = strtol(optarg, NULL, 0);
-				break;
 			case 'i':
 				run_once = true;
 				break;
@@ -83,6 +77,7 @@ int main(int argc, char* argv[])
 		}
 	}
 
+	/*
 	struct sigaction new_action;
 	new_action.sa_handler = call_for_exit;
 	sigemptyset (&new_action.sa_mask);
@@ -90,16 +85,24 @@ int main(int argc, char* argv[])
 	safecall(sigaction, SIGQUIT, &new_action, NULL);
 	safecall(sigaction, SIGTERM, &new_action, NULL);
 	safecall(sigaction, SIGINT, &new_action, NULL);
+	*/
 
 	safecall(chdir, OJ_HOME);
 
-	Judger judger(nworkcpu);
+	Judger judger;
 
+	judger.run_once(601836);
+	//judger.run_once(601842);
+
+	return 0;
+
+	/*
 	if(run_once){
 	}else{
 		judger.work();
 	}
 	
 	return 0;
+	*/
 }
 

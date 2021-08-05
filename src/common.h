@@ -22,6 +22,7 @@
 
 #include <assert.h>
 #include <unistd.h>
+#include <string.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <sys/types.h>
@@ -30,6 +31,7 @@
 #include <glog/logging.h>
 #include <queue>
 #include <set>
+#include <iostream>
 #include <fstream>
 
 #include <thread>
@@ -44,7 +46,7 @@ extern int OJ_CNT_WORKERS;
 extern const char *OJ_URL;
 extern const char *OJ_TOKEN;
 
-const int JUDGER_UID = 1538;
+const int JUDGER_UID = 1537;
 
 const uint64_t STD_MB = 1048576;
 const int OJ_LANGUAGE_C = 0;
@@ -72,6 +74,12 @@ static std::string readFile(const std::string &fileName)
     ifs.read(&bytes[0], fileSize);
 
     return std::string(&bytes[0], fileSize);
+}
+
+static void dpause(){
+	int t;
+	std::cout<<"pause"<<std::endl;
+	std::cin>>t;
 }
 
 #endif // _COMMON_H_

@@ -28,8 +28,9 @@
 class Judger
 {
 public:
-	Judger(int nworkcpu);
+	Judger();
 	void work();
+	void run_once(int);
 
 	void pushPendingSolution(int sid);
 	int popPendingSolution();

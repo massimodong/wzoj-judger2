@@ -20,6 +20,9 @@
 #include "judge-worker.h"
 #include "judger.h"
 #include "solution.h"
+#include "testcase.h"
+
+#include <dirent.h>
 
 JudgeWorker::JudgeWorker(int worker_id):worker_id(worker_id){
 	workdir = "run" + std::to_string(worker_id);
@@ -29,6 +32,7 @@ JudgeWorker::JudgeWorker(int worker_id):worker_id(worker_id){
 JudgeWorker::JudgeWorker(JudgeWorker&& o):workerThread(std::move(o.workerThread)){
 }
 JudgeWorker::~JudgeWorker(){
+	sandbox.end();
 	safecall(rmdir, workdir.c_str());
 }
 
@@ -42,13 +46,72 @@ void JudgeWorker::join(){
 
 void JudgeWorker::worker(Judger &judger){
 	while(OJ_RUNNING){
-		Solution solution;
 		int sid = judger.popPendingSolution();
 		if(sid == -1) break;
-		if(solution.checkout(sid)){
-			solution.load(sid);
-			if(!sandbox.compile_solution(solution)){
+		//if(Solution::checkout(sid)){
+		//	judge(sid);
+		//}
+		judge(sid);
+	}
+}
+
+static bool isInFile(const char *name){
+	int l = strlen(name);
+	if(l <= 3) return false;
+	if(strcmp(name + l - 3, ".in") != 0) return false;
+	return true;
+}
+
+static void readTestcases(const char *path, std::vector<Testcase> &tcs){
+	DIR *dp = opendir(path);
+	dirent *dirp;
+	if(dp != NULL){
+		while((dirp = readdir(dp)) != NULL){
+			if(dirp->d_type != DT_REG) continue; // skip if not a regular file
+			if(!isInFile(dirp->d_name)) continue; // skip if not .in file
+			std::string tnameIn(dirp->d_name);
+			std::string tname = tnameIn.substr(0, tnameIn.length() - 3);
+
+			tnameIn = path + ("/" + tnameIn);
+			std::string tnameOut = path + ("/" + tname + ".out");
+			std::string tnameAns = path + ("/" + tname + ".ans");
+
+			if(access(tnameOut.c_str(), F_OK)){
+				tcs.emplace_back(tname.c_str(), tnameIn.c_str(), tnameOut.c_str());
+				DLOG(INFO)<<"emememe";
+			}else if(access(tnameAns.c_str(), F_OK)){
+				tcs.emplace_back(tname.c_str(), tnameIn.c_str(), tnameAns.c_str());
+				DLOG(INFO)<<"mememem";
+			}else{
+				//TODO: notify not .out or .ans file exists!
 			}
 		}
+	}else{
+		//TODO: notify error!
+		LOG(WARNING)<<"Failed opening directory "<<path;
+		return;
 	}
+}
+
+void JudgeWorker::judge(int sid){
+	Solution solution;
+	solution.load(sid);
+	dpause();
+	if(!sandbox.compile_solution(solution)){
+		solution.reportCE();
+		return;
+	}
+
+	std::vector<Testcase> testcases;
+	readTestcases(solution.datadir, testcases);
+
+	for(auto &t: testcases){
+		t.run();
+	}
+
+	for(auto &t: testcases){
+		t.wait();
+	}
+
+	safecall(unlink, "Main");
 }

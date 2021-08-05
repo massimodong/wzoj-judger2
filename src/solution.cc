@@ -23,7 +23,7 @@
 void Solution::load_real(int sid){
 	std::map<std::string, std::string> par;
 	par["solution_id"] = std::to_string(sid);
-	Json::Value v = http.get("/judger/solution", par);
+	Json::Value v = http.post("/judger/solution", par);
 	DLOG(INFO)<<v;
 
 	id = v["id"].asInt();
@@ -31,14 +31,14 @@ void Solution::load_real(int sid){
 	problem_id = v["problem_id"].asInt();
 	language = v["language"].asInt();
 	code = v["code"].asString();
-	time_used = v["time_used"].asUInt64();
-	memory_used = v["memory_used"].asDouble();
-	status = v["status"].asInt();
-	score = v["score"].asInt();
-	ce = v["ce"].asString();
-	cnt_testcases = v["cnt_testcases"].asInt();
+	//time_used = v["time_used"].asUInt64();
+	//memory_used = v["memory_used"].asDouble();
+	//status = v["status"].asInt();
+	//score = v["score"].asInt();
+	//ce = v["ce"].asString();
+	//cnt_testcases = v["cnt_testcases"].asInt();
 
-	safecall(asprintf, &datadir, "%s/data/%d", OJ_HOME, id);
+	safecall(asprintf, &datadir, "%s/data/%d", OJ_HOME, problem_id);
 	switch(language){
 		case OJ_LANGUAGE_C:
 			loadC();
@@ -84,4 +84,8 @@ void Solution::loadCPP(){
 void Solution::loadPascal(){
 	if(problem.type == OJ_PROBLEM_TYPE_INTERACT) srcFileName = "solution.pas";
 	else srcFileName = "Main.pas";
+}
+
+void Solution::reportCE(){
+	LOG(FATAL)<<"TODO";
 }

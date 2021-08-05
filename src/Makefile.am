@@ -39,7 +39,9 @@ wzoj_judger2_SOURCES = \
 	solution.cc \
 	solution.h \
 	sand-box.cc \
-	sand-box.h
+	sand-box.h \
+	testcase.cc \
+	testcase.h
 
 wzoj_judger2_CXXFLAGS = -lpthread 
 

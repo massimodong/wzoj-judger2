@@ -33,6 +33,7 @@ public:
 	~JudgeWorker();
 	 
 	void startJudging(Judger &);
+	void judge(int);
 	void join();
 	 
 protected:

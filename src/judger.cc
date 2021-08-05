@@ -20,7 +20,7 @@
 #include "common.h"
 #include "judger.h"
 
-Judger::Judger(int nworkcpu):cpusetManager(nworkcpu){
+Judger::Judger(){
 }
 
 void Judger::work()
@@ -36,6 +36,12 @@ void Judger::work()
 	pendingSolutionsCV.notify_all(); // tell all workers stop waiting
 
 	for(int i=0;i<OJ_CNT_WORKERS;++i) judgeWorkers[i].join();
+}
+
+void Judger::run_once(int solution_id){
+	judgeWorkers.emplace_back(0);
+	dpause();
+	judgeWorkers[0].judge(solution_id);
 }
 
 void Judger::pushPendingSolution(int sid){

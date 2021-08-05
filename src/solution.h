@@ -31,12 +31,12 @@ public:
 	int problem_id;
 	int language;
 	std::string code;
-	uint64_t time_used;
-	double memory_used;
-	int status;
-	int score;
+	//uint64_t time_used;
+	//double memory_used;
+	//int status;
+	//int score;
 	std::string ce;
-	int cnt_testcases;
+	//int cnt_testcases;
 
 	Problem problem;
 
@@ -46,6 +46,7 @@ public:
 	void load_real(int);
 	void unload();
 	bool checkout(int, bool = false);
+	void reportCE();
 
 protected:
 

@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 4; tab-width: 4 -*-  */
 /*
- * cpu-set-manager.h
+ * testcase.cc
  * Copyright (C) 2021 Massimo Dong <ms@maxmute.com>
  *
  * wzoj-judger2 is free software: you can redistribute it and/or modify it
@@ -17,33 +17,37 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _CPU_SET_MANAGER_H_
-#define _CPU_SET_MANAGER_H_
+#include "testcase.h"
 
-#include "common.h"
+Testcase::Testcase(const char *name_, const char *fin_, const char *fout_){
+	name = strdup(name_);
+	fin = strdup(fin_);
+	fout = strdup(fout_);
+	LOG(INFO)<<"name: "<<name<<"\nfin: "<<fin<<"\nfout: "<<fout;
+}
 
-class CpuSetManager
-{
-public:
-	CpuSetManager();
-	~CpuSetManager();
-	void use();
-	int grab();
-	void release(int cpuid);
+Testcase::Testcase(Testcase&& o){
+	DLOG(INFO)<<"move "<<o.name;
+	name = o.name;
+	fin = o.fin;
+	fout = o.fout;
+	o.name = o.fin = o.fout = NULL;
+}
 
-protected:
+Testcase::~Testcase(){
+	if(name){
+		assert(fin);
+		assert(fout);
+		DLOG(INFO)<<"Destroying testcase "<<name;
+		free(name);
+		free(fin);
+		free(fout);
+	}
+}
 
-private:
-	int ncpu, nworkcpu;
-	std::vector<int> idle_cpus;
-	std::queue<int> ready_cpus;
-	int nwaiting_tasks;
-	std::mutex mutex;
-	std::condition_variable cv;
+void Testcase::run(){
+}
 
-	void idle2ready(int);
-	void ready2idle(int);
-	void updateIdleCpus();
-};
+void Testcase::wait(){
+}
 
-#endif // _CPU_SET_MANAGER_H_

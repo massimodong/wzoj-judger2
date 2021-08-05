@@ -22,17 +22,13 @@
 
 #include <sys/sysinfo.h>
 
-CpuSetManager::CpuSetManager(int nworkcpu):nworkcpu(nworkcpu){
+CpuSetManager::CpuSetManager(){
+	/*
 	std::lock_guard<std::mutex> lk(mutex);
 	ncpu = get_nprocs();
-
-	if(nworkcpu <= 0){
-		LOG(FATAL)<<"Invalid working cpu number: "<<nworkcpu;
-	}else if(nworkcpu >= ncpu){
-		LOG(FATAL)<<"You have only "<<ncpu<<" cpus.";
-	}
 	
 	LOG(INFO)<<"There are total "<<ncpu<<" cpus";
+	nworkcpu = ncpu - 1;
 	LOG(INFO)<<"Using "<<nworkcpu<<" cpus as working cpu";
 
 	if(mkdir("/dev/cpuset", S_IRWXU))
@@ -49,15 +45,18 @@ CpuSetManager::CpuSetManager(int nworkcpu):nworkcpu(nworkcpu){
 	nwaiting_tasks = 0;
 
 	updateIdleCpus();
+	*/
 };
 
 CpuSetManager::~CpuSetManager(){
+	/*
 	std::lock_guard<std::mutex> lk(mutex);
 	safecall(umount, "/dev/cpuset");
 	safecall(rmdir, "/dev/cpuset");
+	*/
 }
 
-void CpuSetManager::isolate(){
+void CpuSetManager::use(){
 }
 
 int CpuSetManager::grab(){

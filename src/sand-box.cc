@@ -25,8 +25,33 @@ const static int COMPILE_TIME = 60;
 const static int COMPILE_FILE_SIZE = 10 * STD_MB;
 const static int COMPILE_MEMORY = 256 * STD_MB;
 
+#define BINDDIRS(ACTION)\
+	ACTION("bin");\
+	ACTION("usr");\
+	ACTION("lib");\
+	ACTION("lib64");
+
+#define BIND(s)\
+	safecall(mkdir, "compile/" s, S_IRWXU);\
+	safecall(mount, "/" s, "compile/" s, "auto", MS_BIND, NULL);
+
+#define UBIND(s)\
+	safecall(umount, "compile/" s);\
+	safecall(rmdir, "compile/" s);
+
 void SandBox::start(const char *path){
 	safecall(chdir, path);
+	safecall(mkdir, "compile", S_IRWXU);
+	safecall(chown, "compile", JUDGER_UID, JUDGER_UID);
+
+	BINDDIRS(BIND);
+}
+
+void SandBox::end(){
+	BINDDIRS(UBIND);
+	safecall(rmdir, "compile");
+
+	safecall(chdir, "..");
 }
 
 bool SandBox::compile_solution(Solution &solution){
@@ -38,7 +63,9 @@ bool SandBox::compile_solution(Solution &solution){
 
 	prepare_compile_files(solution);
 
-	int ret = compile(solution.language);
+	bool ret = compile(solution.language);
+
+	dpause();
 
 	/*
 	pid_t pid = fork_safe();
@@ -50,8 +77,11 @@ bool SandBox::compile_solution(Solution &solution){
 	}
 	*/
 
-	if(!ret) solution.ce = readFile("./compile/ce.txt");
-	safecall(rename, "./compile/Main", "Main");
+	if(!ret){
+		solution.ce = readFile("./compile/ce.txt");
+	}else{
+		safecall(rename, "./compile/Main", "Main");
+	}
 
 	clear_compile_files();
 
@@ -84,9 +114,9 @@ void SandBox::setlimits(uint64_t time, uint64_t memory, uint64_t file_size){
 
 	safecall(chroot, "./");
 
-	while(setgid(JUDGER_UID)!=0) sleep(1);
-	while(setuid(JUDGER_UID)!=0) sleep(1);
-	while(setresuid(JUDGER_UID, JUDGER_UID, JUDGER_UID)!=0) sleep(1);
+	safecall(setgid, JUDGER_UID);
+	safecall(setuid, JUDGER_UID);
+	safecall(setresuid, JUDGER_UID, JUDGER_UID, JUDGER_UID);
 }
 
 void SandBox::prepare_compile_files(const Solution &solution){
@@ -97,10 +127,17 @@ void SandBox::prepare_compile_files(const Solution &solution){
 	FILE *fsrc = fopen(solution.srcFileName, "w");
 	fputs(solution.code.c_str(), fsrc);
 	fclose(fsrc);
+	compile_files.push_back(solution.srcFileName);
+	compile_files.push_back("ce.txt");
 	safecall(chdir, "..");
 }
 
 void SandBox::clear_compile_files(){
+	safecall(chdir, "./compile");
+	for(auto &f: compile_files){
+		safecall(unlink, f.c_str());
+	}
+	safecall(chdir, "..");
 	LOG(WARNING)<<"clear compile files";
 }
 
@@ -111,6 +148,7 @@ bool SandBox::compile(int language){
 	}else{
 		int status = 0;
 		safecall(waitpid, pid, &status, 0);
+		DLOG(INFO)<<"status: "<<status;
 		if(status){
 			return false;
 		}else{

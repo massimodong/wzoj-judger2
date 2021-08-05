@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 4; tab-width: 4 -*-  */
 /*
- * cpu-set-manager.h
+ * testcase.h
  * Copyright (C) 2021 Massimo Dong <ms@maxmute.com>
  *
  * wzoj-judger2 is free software: you can redistribute it and/or modify it
@@ -17,33 +17,26 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _CPU_SET_MANAGER_H_
-#define _CPU_SET_MANAGER_H_
+#ifndef _TESTCASE_H_
+#define _TESTCASE_H_
 
 #include "common.h"
 
-class CpuSetManager
+class Testcase
 {
 public:
-	CpuSetManager();
-	~CpuSetManager();
-	void use();
-	int grab();
-	void release(int cpuid);
+	Testcase(const char *name, const char *fin, const char *fout);
+	Testcase(Testcase&&);
+	~Testcase();
+	void run();
+	void wait();
 
 protected:
 
 private:
-	int ncpu, nworkcpu;
-	std::vector<int> idle_cpus;
-	std::queue<int> ready_cpus;
-	int nwaiting_tasks;
-	std::mutex mutex;
-	std::condition_variable cv;
+	char *name, *fin, *fout;
 
-	void idle2ready(int);
-	void ready2idle(int);
-	void updateIdleCpus();
 };
 
-#endif // _CPU_SET_MANAGER_H_
+#endif // _TESTCASE_H_
+
