@@ -20,7 +20,8 @@
 #ifndef _REMOTE_OBJECT_H_
 #define _REMOTE_OBJECT_H_
 
-#include "http.h"
+#include "get-rq.h"
+#include "post-rq.h"
 
 class RemoteObject
 {
@@ -31,7 +32,6 @@ public:
 	void unload();
 
 protected:
-	Http &http;
 	virtual void load_real(int);
 
 private:

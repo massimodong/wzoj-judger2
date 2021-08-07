@@ -21,7 +21,7 @@
 #include "http.h"
 #include "common.h"
 
-RemoteObject::RemoteObject():http(Http::getInstance()), remoteObjectLoaded(false){
+RemoteObject::RemoteObject():remoteObjectLoaded(false){
 }
 
 RemoteObject::~RemoteObject(){

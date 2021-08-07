@@ -111,7 +111,8 @@ am_wzoj_judger2_OBJECTS = wzoj_judger2-main.$(OBJEXT) \
 	wzoj_judger2-judge-worker.$(OBJEXT) \
 	wzoj_judger2-solution.$(OBJEXT) \
 	wzoj_judger2-sand-box.$(OBJEXT) \
-	wzoj_judger2-testcase.$(OBJEXT)
+	wzoj_judger2-testcase.$(OBJEXT) wzoj_judger2-get-rq.$(OBJEXT) \
+	wzoj_judger2-request.$(OBJEXT) wzoj_judger2-post-rq.$(OBJEXT)
 wzoj_judger2_OBJECTS = $(am_wzoj_judger2_OBJECTS)
 am__DEPENDENCIES_1 =
 wzoj_judger2_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -138,13 +139,16 @@ DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/wzoj_judger2-cpu-set-manager.Po \
+	./$(DEPDIR)/wzoj_judger2-get-rq.Po \
 	./$(DEPDIR)/wzoj_judger2-http.Po \
 	./$(DEPDIR)/wzoj_judger2-jsoncpp.Po \
 	./$(DEPDIR)/wzoj_judger2-judge-worker.Po \
 	./$(DEPDIR)/wzoj_judger2-judger.Po \
 	./$(DEPDIR)/wzoj_judger2-main.Po \
+	./$(DEPDIR)/wzoj_judger2-post-rq.Po \
 	./$(DEPDIR)/wzoj_judger2-problem.Po \
 	./$(DEPDIR)/wzoj_judger2-remote-object.Po \
+	./$(DEPDIR)/wzoj_judger2-request.Po \
 	./$(DEPDIR)/wzoj_judger2-sand-box.Po \
 	./$(DEPDIR)/wzoj_judger2-solution.Po \
 	./$(DEPDIR)/wzoj_judger2-solutions-listener.Po \
@@ -406,7 +410,13 @@ wzoj_judger2_SOURCES = \
 	sand-box.cc \
 	sand-box.h \
 	testcase.cc \
-	testcase.h
+	testcase.h \
+	get-rq.cc \
+	get-rq.h \
+	request.cc \
+	request.h \
+	post-rq.cc \
+	post-rq.h
 
 wzoj_judger2_CXXFLAGS = -lpthread 
 wzoj_judger2_LDFLAGS = 
@@ -508,13 +518,16 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wzoj_judger2-cpu-set-manager.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wzoj_judger2-get-rq.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wzoj_judger2-http.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wzoj_judger2-jsoncpp.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wzoj_judger2-judge-worker.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wzoj_judger2-judger.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wzoj_judger2-main.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wzoj_judger2-post-rq.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wzoj_judger2-problem.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wzoj_judger2-remote-object.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wzoj_judger2-request.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wzoj_judger2-sand-box.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wzoj_judger2-solution.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wzoj_judger2-solutions-listener.Po@am__quote@ # am--include-marker
@@ -715,6 +728,48 @@ wzoj_judger2-testcase.obj: testcase.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wzoj_judger2_CXXFLAGS) $(CXXFLAGS) -c -o wzoj_judger2-testcase.obj `if test -f 'testcase.cc'; then $(CYGPATH_W) 'testcase.cc'; else $(CYGPATH_W) '$(srcdir)/testcase.cc'; fi`
 
+wzoj_judger2-get-rq.o: get-rq.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wzoj_judger2_CXXFLAGS) $(CXXFLAGS) -MT wzoj_judger2-get-rq.o -MD -MP -MF $(DEPDIR)/wzoj_judger2-get-rq.Tpo -c -o wzoj_judger2-get-rq.o `test -f 'get-rq.cc' || echo '$(srcdir)/'`get-rq.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/wzoj_judger2-get-rq.Tpo $(DEPDIR)/wzoj_judger2-get-rq.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='get-rq.cc' object='wzoj_judger2-get-rq.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wzoj_judger2_CXXFLAGS) $(CXXFLAGS) -c -o wzoj_judger2-get-rq.o `test -f 'get-rq.cc' || echo '$(srcdir)/'`get-rq.cc
+
+wzoj_judger2-get-rq.obj: get-rq.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wzoj_judger2_CXXFLAGS) $(CXXFLAGS) -MT wzoj_judger2-get-rq.obj -MD -MP -MF $(DEPDIR)/wzoj_judger2-get-rq.Tpo -c -o wzoj_judger2-get-rq.obj `if test -f 'get-rq.cc'; then $(CYGPATH_W) 'get-rq.cc'; else $(CYGPATH_W) '$(srcdir)/get-rq.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/wzoj_judger2-get-rq.Tpo $(DEPDIR)/wzoj_judger2-get-rq.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='get-rq.cc' object='wzoj_judger2-get-rq.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wzoj_judger2_CXXFLAGS) $(CXXFLAGS) -c -o wzoj_judger2-get-rq.obj `if test -f 'get-rq.cc'; then $(CYGPATH_W) 'get-rq.cc'; else $(CYGPATH_W) '$(srcdir)/get-rq.cc'; fi`
+
+wzoj_judger2-request.o: request.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wzoj_judger2_CXXFLAGS) $(CXXFLAGS) -MT wzoj_judger2-request.o -MD -MP -MF $(DEPDIR)/wzoj_judger2-request.Tpo -c -o wzoj_judger2-request.o `test -f 'request.cc' || echo '$(srcdir)/'`request.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/wzoj_judger2-request.Tpo $(DEPDIR)/wzoj_judger2-request.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='request.cc' object='wzoj_judger2-request.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wzoj_judger2_CXXFLAGS) $(CXXFLAGS) -c -o wzoj_judger2-request.o `test -f 'request.cc' || echo '$(srcdir)/'`request.cc
+
+wzoj_judger2-request.obj: request.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wzoj_judger2_CXXFLAGS) $(CXXFLAGS) -MT wzoj_judger2-request.obj -MD -MP -MF $(DEPDIR)/wzoj_judger2-request.Tpo -c -o wzoj_judger2-request.obj `if test -f 'request.cc'; then $(CYGPATH_W) 'request.cc'; else $(CYGPATH_W) '$(srcdir)/request.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/wzoj_judger2-request.Tpo $(DEPDIR)/wzoj_judger2-request.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='request.cc' object='wzoj_judger2-request.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wzoj_judger2_CXXFLAGS) $(CXXFLAGS) -c -o wzoj_judger2-request.obj `if test -f 'request.cc'; then $(CYGPATH_W) 'request.cc'; else $(CYGPATH_W) '$(srcdir)/request.cc'; fi`
+
+wzoj_judger2-post-rq.o: post-rq.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wzoj_judger2_CXXFLAGS) $(CXXFLAGS) -MT wzoj_judger2-post-rq.o -MD -MP -MF $(DEPDIR)/wzoj_judger2-post-rq.Tpo -c -o wzoj_judger2-post-rq.o `test -f 'post-rq.cc' || echo '$(srcdir)/'`post-rq.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/wzoj_judger2-post-rq.Tpo $(DEPDIR)/wzoj_judger2-post-rq.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='post-rq.cc' object='wzoj_judger2-post-rq.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wzoj_judger2_CXXFLAGS) $(CXXFLAGS) -c -o wzoj_judger2-post-rq.o `test -f 'post-rq.cc' || echo '$(srcdir)/'`post-rq.cc
+
+wzoj_judger2-post-rq.obj: post-rq.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wzoj_judger2_CXXFLAGS) $(CXXFLAGS) -MT wzoj_judger2-post-rq.obj -MD -MP -MF $(DEPDIR)/wzoj_judger2-post-rq.Tpo -c -o wzoj_judger2-post-rq.obj `if test -f 'post-rq.cc'; then $(CYGPATH_W) 'post-rq.cc'; else $(CYGPATH_W) '$(srcdir)/post-rq.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/wzoj_judger2-post-rq.Tpo $(DEPDIR)/wzoj_judger2-post-rq.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='post-rq.cc' object='wzoj_judger2-post-rq.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wzoj_judger2_CXXFLAGS) $(CXXFLAGS) -c -o wzoj_judger2-post-rq.obj `if test -f 'post-rq.cc'; then $(CYGPATH_W) 'post-rq.cc'; else $(CYGPATH_W) '$(srcdir)/post-rq.cc'; fi`
+
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
@@ -870,13 +925,16 @@ clean-am: clean-binPROGRAMS clean-generic clean-libtool mostlyclean-am
 
 distclean: distclean-am
 		-rm -f ./$(DEPDIR)/wzoj_judger2-cpu-set-manager.Po
+	-rm -f ./$(DEPDIR)/wzoj_judger2-get-rq.Po
 	-rm -f ./$(DEPDIR)/wzoj_judger2-http.Po
 	-rm -f ./$(DEPDIR)/wzoj_judger2-jsoncpp.Po
 	-rm -f ./$(DEPDIR)/wzoj_judger2-judge-worker.Po
 	-rm -f ./$(DEPDIR)/wzoj_judger2-judger.Po
 	-rm -f ./$(DEPDIR)/wzoj_judger2-main.Po
+	-rm -f ./$(DEPDIR)/wzoj_judger2-post-rq.Po
 	-rm -f ./$(DEPDIR)/wzoj_judger2-problem.Po
 	-rm -f ./$(DEPDIR)/wzoj_judger2-remote-object.Po
+	-rm -f ./$(DEPDIR)/wzoj_judger2-request.Po
 	-rm -f ./$(DEPDIR)/wzoj_judger2-sand-box.Po
 	-rm -f ./$(DEPDIR)/wzoj_judger2-solution.Po
 	-rm -f ./$(DEPDIR)/wzoj_judger2-solutions-listener.Po
@@ -927,13 +985,16 @@ installcheck-am:
 
 maintainer-clean: maintainer-clean-am
 		-rm -f ./$(DEPDIR)/wzoj_judger2-cpu-set-manager.Po
+	-rm -f ./$(DEPDIR)/wzoj_judger2-get-rq.Po
 	-rm -f ./$(DEPDIR)/wzoj_judger2-http.Po
 	-rm -f ./$(DEPDIR)/wzoj_judger2-jsoncpp.Po
 	-rm -f ./$(DEPDIR)/wzoj_judger2-judge-worker.Po
 	-rm -f ./$(DEPDIR)/wzoj_judger2-judger.Po
 	-rm -f ./$(DEPDIR)/wzoj_judger2-main.Po
+	-rm -f ./$(DEPDIR)/wzoj_judger2-post-rq.Po
 	-rm -f ./$(DEPDIR)/wzoj_judger2-problem.Po
 	-rm -f ./$(DEPDIR)/wzoj_judger2-remote-object.Po
+	-rm -f ./$(DEPDIR)/wzoj_judger2-request.Po
 	-rm -f ./$(DEPDIR)/wzoj_judger2-sand-box.Po
 	-rm -f ./$(DEPDIR)/wzoj_judger2-solution.Po
 	-rm -f ./$(DEPDIR)/wzoj_judger2-solutions-listener.Po

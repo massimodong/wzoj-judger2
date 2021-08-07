@@ -19,11 +19,12 @@
 
 #include "common.h"
 #include "solution.h"
+#include "testcase.h"
 
 void Solution::load_real(int sid){
-	std::map<std::string, std::string> par;
-	par["solution_id"] = std::to_string(sid);
-	Json::Value v = http.post("/judger/solution", par);
+	PostRq rq("/judger/solution");
+	rq.addParam("solution_id", std::to_string(sid));
+	Json::Value v = rq.post();
 	DLOG(INFO)<<v;
 
 	id = v["id"].asInt();
@@ -65,12 +66,14 @@ void Solution::unload(){
 }
 
 bool Solution::checkout(int sid, bool force){
+	/*
 	std::map<std::string, std::string> par;
 	par["solution_id"] = std::to_string(sid);
 	if(force){
 		par["force"] = "true";
 	}
-	return http.post("/judger/checkout", par)["ok"].asBool();
+	return http.post("/judger/checkout", par)["ok"].asBool();*/
+	return false;
 }
 
 void Solution::loadC(){
@@ -88,4 +91,12 @@ void Solution::loadPascal(){
 
 void Solution::reportCE(){
 	LOG(FATAL)<<"TODO";
+}
+
+void Solution::reportTestcases(std::vector<Testcase> &tcs){
+	std::map<std::string, std::string> par;
+	par["solution_id"] = std::to_string(id);
+	for(auto &t: tcs){
+	}
+
 }

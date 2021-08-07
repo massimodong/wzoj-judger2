@@ -41,7 +41,13 @@ wzoj_judger2_SOURCES = \
 	sand-box.cc \
 	sand-box.h \
 	testcase.cc \
-	testcase.h
+	testcase.h \
+	get-rq.cc \
+	get-rq.h \
+	request.cc \
+	request.h \
+	post-rq.cc \
+	post-rq.h
 
 wzoj_judger2_CXXFLAGS = -lpthread 
 

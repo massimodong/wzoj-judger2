@@ -21,9 +21,10 @@
 #include "common.h"
 
 void Problem::load_real(int pid){
-	std::map<std::string, std::string> par;
-	par["problem_id"] = std::to_string(pid);
-	Json::Value v = http.get("/judger/problem", par);
+	GetRq rq("/judger/problem");
+	rq.addParam("problem_id", std::to_string(pid));
+	Json::Value v = rq.get();
+
 	DLOG(INFO)<<v;
 
 	id = v["id"].asInt();

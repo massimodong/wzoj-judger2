@@ -23,6 +23,8 @@
 #include "remote-object.h"
 #include "problem.h"
 
+class Testcase;
+
 class Solution: public RemoteObject 
 {
 public:
@@ -47,6 +49,7 @@ public:
 	void unload();
 	bool checkout(int, bool = false);
 	void reportCE();
+	void reportTestcases(std::vector<Testcase> &tcs);
 
 protected:
 

@@ -105,6 +105,8 @@ void JudgeWorker::judge(int sid){
 	std::vector<Testcase> testcases;
 	readTestcases(solution, testcases);
 
+	solution.reportTestcases(testcases);
+
 	for(auto &t: testcases){
 		t.run(sandbox);
 		break;

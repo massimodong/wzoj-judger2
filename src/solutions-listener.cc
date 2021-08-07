@@ -44,7 +44,7 @@ void SolutionsListener::worker_udp(Judger &judger){
 }
 
 void SolutionsListener::probe(Judger &judger){
-	Json::Value sols = Http::getInstance().get("/judger/pending-solutions");
+	Json::Value sols = GetRq("/judger/pending-solutions").get();
 	DLOG(INFO)<<sols;
 	for(int i=0;i<sols.size();++i){
 		judger.pushPendingSolution(sols[i]["id"].asInt());

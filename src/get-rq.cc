@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 4; tab-width: 4 -*-  */
 /*
- * http.h
+ * get-rq.cc
  * Copyright (C) 2021 Massimo Dong <ms@maxmute.com>
  *
  * wzoj-judger2 is free software: you can redistribute it and/or modify it
@@ -17,26 +17,23 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _HTTP_H_
-#define _HTTP_H_
+#include "get-rq.h"
 
-#include "json.h"
-#include "json-forwards.h"
-#include <curl/curl.h>
+GetRq::GetRq(std::string url):Request(url){
+}
 
-class Http
-{
-public:
-	static Http& getInstance();
-	Json::Value raw_post(std::string url, std::string data, bool isPost);
+Json::Value GetRq::get(){
+	CURL *curl = curl_easy_init();
+	std::string path = OJ_URL + url + "?judger_token=" + OJ_TOKEN;
 	
+	for(auto const &p: params){
+		char *value = curl_easy_escape(curl, p.second.c_str(), 0);
+		path += "&" + p.first + "=" + value;
+		curl_free(value);
+	}
 
-protected:
+	DLOG(INFO)<<"performing get request:\n"<<path;
 
-private:
-	Http();
-	Json::Value jsonDecode(const std::string *);
-};
-
-#endif // _HTTP_H_
-
+	curl_easy_cleanup(curl);
+	return http.raw_post(path, std::string(""), false);
+}

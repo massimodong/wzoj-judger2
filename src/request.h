@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 4; tab-width: 4 -*-  */
 /*
- * http.h
+ * request.h
  * Copyright (C) 2021 Massimo Dong <ms@maxmute.com>
  *
  * wzoj-judger2 is free software: you can redistribute it and/or modify it
@@ -17,26 +17,26 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _HTTP_H_
-#define _HTTP_H_
+#ifndef _REQUEST_H_
+#define _REQUEST_H_
 
-#include "json.h"
-#include "json-forwards.h"
-#include <curl/curl.h>
+#include "common.h"
+#include "http.h"
 
-class Http
+class Request
 {
 public:
-	static Http& getInstance();
-	Json::Value raw_post(std::string url, std::string data, bool isPost);
-	
+	Request(std::string);
+	void addParam(std::string, std::string);
 
 protected:
+	Http &http;
+	std::vector<std::pair<std::string, std::string>> params;
+	std::string url;
 
 private:
-	Http();
-	Json::Value jsonDecode(const std::string *);
+
 };
 
-#endif // _HTTP_H_
+#endif // _REQUEST_H_
 

@@ -21,7 +21,6 @@
 #include "common.h"
 #include "json.h"
 #include "json-forwards.h"
-#include <curl/curl.h>
 
 Http::Http(){
 	LOG(INFO)<<"Singleton class Http initialized";
@@ -117,49 +116,4 @@ Json::Value Http::raw_post(std::string url, std::string data, bool isPost){
 		}
 	}
 	return Json::Value();
-}
-
-Json::Value Http::get(std::string url, std::map<std::string,std::string> par){
-	CURL *curl = curl_easy_init();
-	url = OJ_URL + url + "?judger_token=" + OJ_TOKEN;
-	//std::cerr<<url.c_str();
-	
-	for(auto const &p: par){
-		char *value = curl_easy_escape(curl, p.second.c_str(), 0);
-		url += "&" + p.first + "=" + value;
-		curl_free(value);
-	}
-
-	DLOG(INFO)<<"performing get request with url\n"<<url;
-
-	curl_easy_cleanup(curl);
-	return raw_post(url, std::string(""), false);
-}
-
-Json::Value Http::get(std::string url){
-	std::map<std::string,std::string> par;
-	return get(url, par);
-}
-
-Json::Value Http::post(std::string url, std::map<std::string,std::string> par){
-	CURL *curl = curl_easy_init();
-	url = OJ_URL + url + "?judger_token=" + OJ_TOKEN;
-	//std::cerr<<url.c_str();
-	
-	std::string data;
-	bool first_param = true;
-	for(auto const &p: par){
-		char *value = curl_easy_escape(curl, p.second.c_str(), 0);
-		if(first_param){
-			data += p.first + "=" + value;
-			first_param = false;
-		}else{
-			data += "&" + p.first + "=" + value;
-		}
-		curl_free(value);
-	}
-	DLOG(INFO)<<"performin post request with url\n"<<url<<"\nand data"<<data;
-
-	curl_easy_cleanup(curl);
-	return raw_post(url,data,true);
 }
