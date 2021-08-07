@@ -22,6 +22,7 @@
 
 #include "common.h"
 #include "sand-box.h"
+#include "testcase.h"
 
 class Judger;
 

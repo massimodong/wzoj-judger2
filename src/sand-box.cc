@@ -19,7 +19,10 @@
 
 #include "common.h"
 #include "sand-box.h"
+#include "testcase.h"
 #include <sys/resource.h>
+#include <filesystem>
+#include <seccomp.h>
 
 const static int COMPILE_TIME = 60;
 const static int COMPILE_FILE_SIZE = 10 * STD_MB;
@@ -43,6 +46,7 @@ void SandBox::start(const char *path){
 	safecall(chdir, path);
 	safecall(mkdir, "compile", S_IRWXU);
 	safecall(chown, "compile", JUDGER_UID, JUDGER_UID);
+	safecall(mkdir, "run", S_IRWXU);
 
 	BINDDIRS(BIND);
 }
@@ -50,6 +54,7 @@ void SandBox::start(const char *path){
 void SandBox::end(){
 	BINDDIRS(UBIND);
 	safecall(rmdir, "compile");
+	safecall(rmdir, "run");
 
 	safecall(chdir, "..");
 }
@@ -119,6 +124,24 @@ void SandBox::setlimits(uint64_t time, uint64_t memory, uint64_t file_size){
 	safecall(setresuid, JUDGER_UID, JUDGER_UID, JUDGER_UID);
 }
 
+void SandBox::apply_seccomp(){
+	scmp_filter_ctx ctx = seccomp_init(SCMP_ACT_KILL);
+	if(ctx == NULL) LOG(FATAL)<<"ceccomp_init failed";
+
+	const int whitelist[] = {SCMP_SYS(brk), SCMP_SYS(readlink), SCMP_SYS(read),
+		SCMP_SYS(newfstatat), SCMP_SYS(write), SCMP_SYS(mprotect),
+		SCMP_SYS(arch_prctl), SCMP_SYS(lseek), SCMP_SYS(uname),
+		SCMP_SYS(execve), SCMP_SYS(exit_group)};
+
+	for(int syscall: whitelist){
+		seccomp_rule_add(ctx, SCMP_ACT_ALLOW, syscall, 0);
+	}
+
+	int load_res = seccomp_load(ctx);
+	if(load_res) LOG(FATAL)<<"load seccomp contex failed";
+	seccomp_release(ctx);
+}
+
 void SandBox::prepare_compile_files(const Solution &solution){
 	safecall(chdir, "./compile");
 	if(solution.problem.type == OJ_PROBLEM_TYPE_INTERACT){
@@ -180,5 +203,59 @@ bool SandBox::compile(int language){
 	}
 	setlimits(COMPILE_TIME, COMPILE_MEMORY, COMPILE_FILE_SIZE);
 	safecall(execvp, CP[language][0], CP[language]);
+	LOG(FATAL)<<"should not reach here";
+}
+
+void SandBox::run_testcase(Testcase &testcase){
+	safecall(chdir, "run");
+	safecall(mkdir, testcase.name, S_IRWXU);
+	safecall(chown, testcase.name, JUDGER_UID, JUDGER_UID);
+	safecall(chdir, testcase.name);
+	std::filesystem::copy_file(testcase.fin, "data.in");
+	std::filesystem::copy_file("../../Main", "Main");
+
+	dpause();
+
+	int status = 0;
+	struct rusage usage;
+	
+	pid_t pid = fork_safe();
+	if(pid == 0){
+		executeRunTestcase();
+	}else{
+		safecall(wait4, pid, &status, 0, &usage);
+		dpause();
+	}
+
+	testcase.time_used = usage.ru_utime.tv_sec * (1000000ll) + usage.ru_utime.tv_usec;
+	testcase.memory_used = usage.ru_maxrss;
+
+	if(WIFEXITED(status) && (WEXITSTATUS(status) == 0)){
+		int fdout = open("data.out", O_RDONLY);
+		if(fdout == -1) LOG(FATAL)<<"Failed to open data.out";
+		testcase.rate(fdout);
+		safecall(close, fdout);
+	}else{ // RE
+		testcase.verdict = "RE";
+		testcase.score = 100;
+	}
+
+	safecall(unlink, "Main");
+	safecall(unlink, "data.in");
+	safecall(unlink, "data.out");
+	safecall(unlink, "re.txt");
+	safecall(chdir, "..");
+	safecall(rmdir, testcase.name);
+	safecall(chdir, "..");
+}
+
+[[ noreturn ]] void SandBox::executeRunTestcase(){
+	const char * Main[] = { "./Main", NULL };
+	safecall_err(NULL, freopen, "data.in", "r", stdin);
+	safecall_err(NULL, freopen, "data.out", "w", stdout);
+	safecall_err(NULL, freopen, "re.txt", "w", stderr);
+	setlimits(COMPILE_TIME, COMPILE_MEMORY, COMPILE_FILE_SIZE);
+	apply_seccomp();
+	safecall(execvp, Main[0], (char * const *)Main);
 	LOG(FATAL)<<"should not reach here";
 }

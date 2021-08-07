@@ -21,20 +21,30 @@
 #define _TESTCASE_H_
 
 #include "common.h"
+#include "sand-box.h"
 
 class Testcase
 {
 public:
-	Testcase(const char *name, const char *fin, const char *fout);
+	Testcase(const char *name, const char *fin, const char *fout, const Solution &solution);
 	Testcase(Testcase&&);
 	~Testcase();
-	void run();
+	void run(SandBox &);
 	void wait();
+	void rate(int);
 
+	char *name, *fin, *fout;
+	const Solution &solution;
+
+	uint64_t time_used, memory_used;
+	int score;
+	std::string verdict;
 protected:
 
 private:
-	char *name, *fin, *fout;
+	std::thread thread;
+
+	void run_testcase(SandBox &sandbox);
 
 };
 

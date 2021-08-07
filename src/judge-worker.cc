@@ -20,7 +20,6 @@
 #include "judge-worker.h"
 #include "judger.h"
 #include "solution.h"
-#include "testcase.h"
 
 #include <dirent.h>
 
@@ -62,7 +61,8 @@ static bool isInFile(const char *name){
 	return true;
 }
 
-static void readTestcases(const char *path, std::vector<Testcase> &tcs){
+static void readTestcases(const Solution &solution, std::vector<Testcase> &tcs){
+	const char *path = solution.datadir;
 	DIR *dp = opendir(path);
 	dirent *dirp;
 	if(dp != NULL){
@@ -77,10 +77,10 @@ static void readTestcases(const char *path, std::vector<Testcase> &tcs){
 			std::string tnameAns = path + ("/" + tname + ".ans");
 
 			if(access(tnameOut.c_str(), F_OK)){
-				tcs.emplace_back(tname.c_str(), tnameIn.c_str(), tnameOut.c_str());
+				tcs.emplace_back(tname.c_str(), tnameIn.c_str(), tnameOut.c_str(), std::ref(solution));
 				DLOG(INFO)<<"emememe";
 			}else if(access(tnameAns.c_str(), F_OK)){
-				tcs.emplace_back(tname.c_str(), tnameIn.c_str(), tnameAns.c_str());
+				tcs.emplace_back(tname.c_str(), tnameIn.c_str(), tnameAns.c_str(), std::ref(solution));
 				DLOG(INFO)<<"mememem";
 			}else{
 				//TODO: notify not .out or .ans file exists!
@@ -103,14 +103,16 @@ void JudgeWorker::judge(int sid){
 	}
 
 	std::vector<Testcase> testcases;
-	readTestcases(solution.datadir, testcases);
+	readTestcases(solution, testcases);
 
 	for(auto &t: testcases){
-		t.run();
+		t.run(sandbox);
+		break;
 	}
 
 	for(auto &t: testcases){
 		t.wait();
+		break;
 	}
 
 	safecall(unlink, "Main");

@@ -22,12 +22,15 @@
 
 #include "solution.h"
 
+class Testcase;
+
 class SandBox
 {
 public:
 	void start(const char *path);
 	void end();
 	bool compile_solution(Solution &solution);
+	void run_testcase(Testcase &);
 
 protected:
 
@@ -36,10 +39,12 @@ private:
 
 	pid_t fork_safe();
 	void setlimits(uint64_t, uint64_t, uint64_t);
+	void apply_seccomp();
 	void prepare_compile_files(const Solution &solution);
 	void clear_compile_files();
 	bool compile(int language);
 	[[ noreturn ]] void executeCompile(int language);
+	[[ noreturn ]] void executeRunTestcase();
 
 };
 
