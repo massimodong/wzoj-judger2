@@ -4,7 +4,7 @@ OBJS := $(SRCS:cc=o) comparer.o
 test: $(OBJS)
 	g++ $(OBJS) -lgtest_main  -lgtest -lpthread -lglog -o test
 
-comparer.o: ../src/comparer.cc
+comparer.o: ../src/comparer.cc ../src/comparer.h
 	g++ -c ../src/comparer.cc
 
 %.o: %.cc

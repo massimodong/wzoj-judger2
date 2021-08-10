@@ -58,7 +58,7 @@ void Comparer::read_bom(){
 	fill_buffer();
 	if(pos) LOG(FATAL)<<"???";
 	if(buffer_size >= 3){
-		if(buffer[0] == 0xef && buffer[1] == 0xbb && buffer[2] == 0xbf){
+		if(buffer[0] == '\xEF' && buffer[1] == '\xBB' && buffer[2] == '\xBF'){
 			pos += 3;
 		}
 	}
@@ -104,4 +104,6 @@ bool Comparer::reachEOF(){
 void Comparer::reset(){
 	lseek(fd, 0, SEEK_SET);
 	pos = buffer_size = 0;
+
+	read_bom();
 }

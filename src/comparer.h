@@ -36,7 +36,7 @@ protected:
 
 private:
 	int fd, c;
-	char buffer[COMP_BUFF_SIZE];
+	int8_t buffer[COMP_BUFF_SIZE];
 	int pos, buffer_size;
 	void fill_buffer();
 	void read_bom();
