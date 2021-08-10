@@ -30,11 +30,11 @@ public:
 	void addParam(std::string, std::string);
 
 protected:
+	std::string url;
 	Http &http;
 	std::vector<std::pair<std::string, std::string>> params;
-	std::string url;
 
-private:
+ private:
 
 };
 

@@ -1,7 +1,7 @@
 /* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 4; tab-width: 4 -*-  */
 /*
- * testcase.h
- * Copyright (C) 2021 Massimo Dong <ms@maxmute.com>
+ * comparer.h
+ * Copyright (C) 2021 Unknown <dongmassimo@gmail.com>
  *
  * wzoj-judger2 is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -17,37 +17,33 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _TESTCASE_H_
-#define _TESTCASE_H_
+#ifndef _COMPARER_H_
+#define _COMPARER_H_
 
 #include "common.h"
-#include "sand-box.h"
-#include "comparer.h"
 
-class Testcase
+const int COMP_BUFF_SIZE = 1024;
+static_assert(COMP_BUFF_SIZE > 3);
+
+class Comparer
 {
 public:
-	Testcase(const char *name, const char *fin, const char *fout, const Solution &solution);
-	Testcase(Testcase&&);
-	~Testcase();
-	void run(SandBox &);
-	void wait();
-	void rate(int);
+	Comparer(int);
+	bool operator ==(Comparer &o);
+	void reset();
 
-	char *name, *fin, *fout;
-	const Solution &solution;
-
-	uint64_t time_used, memory_used;
-	int score;
-	std::string verdict;
 protected:
 
 private:
-	std::thread thread;
-
-	void run_testcase(SandBox &sandbox);
-	void report();
+	int fd, c;
+	char buffer[COMP_BUFF_SIZE];
+	int pos, buffer_size;
+	void fill_buffer();
+	void read_bom();
+	void read_char();
+	bool reachNewLine();
+	bool reachEOF();
 };
 
-#endif // _TESTCASE_H_
+#endif // _COMPARER_H_
 

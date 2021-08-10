@@ -35,8 +35,6 @@ public:
 protected:
 
 private:
-	std::vector<std::string> compile_files;
-
 	pid_t fork_safe();
 	void setlimits(uint64_t, uint64_t, uint64_t);
 	void apply_seccomp();

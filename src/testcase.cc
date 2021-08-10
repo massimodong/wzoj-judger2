@@ -53,6 +53,7 @@ void Testcase::run(SandBox &sandbox){
 
 void Testcase::run_testcase(SandBox &sandbox){
 	sandbox.run_testcase(std::ref(*this));
+	report();
 }
 
 void Testcase::wait(){
@@ -60,7 +61,27 @@ void Testcase::wait(){
 }
 
 void Testcase::rate(int fdout){
-	//TODO
-	verdict = "AC";
-	score = 100;
+	int fdans = open(fout, O_RDONLY);
+	Comparer cp1(fdans), cp2(fdout);
+
+	if(cp1 == cp2){
+		verdict = "AC";
+		score = 100;
+	}else{
+		verdict = "WA";
+		score = 0;
+	}
+
+	close(fdans);
+}
+
+void Testcase::report(){
+	PostRq rq("/judger/testcase");
+	rq.addParam("solution_id", std::to_string(solution.id));
+	rq.addParam("testcase_name", name);
+	rq.addParam("time_used", std::to_string(time_used));
+	rq.addParam("memory_used", std::to_string(memory_used));
+	rq.addParam("verdict", verdict);
+	rq.addParam("score", std::to_string(score));
+	rq.post();	
 }

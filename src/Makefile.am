@@ -47,7 +47,9 @@ wzoj_judger2_SOURCES = \
 	request.cc \
 	request.h \
 	post-rq.cc \
-	post-rq.h
+	post-rq.h \
+	comparer.cc \
+	comparer.h
 
 wzoj_judger2_CXXFLAGS = -lpthread 
 

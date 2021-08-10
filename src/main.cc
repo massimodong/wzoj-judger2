@@ -91,6 +91,8 @@ int main(int argc, char* argv[])
 
 	Judger judger;
 
+	//judger.run_once(295495);
+	//judger.run_once(601828);
 	judger.run_once(601836);
 	//judger.run_once(601842);
 

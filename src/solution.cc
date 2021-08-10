@@ -90,13 +90,18 @@ void Solution::loadPascal(){
 }
 
 void Solution::reportCE(){
-	LOG(FATAL)<<"TODO";
+	PostRq rq("judger/compile-error");
+	rq.addParam("solution_id", std::to_string(id));
+	rq.addParam("ce", ce);
+	rq.post();
 }
 
 void Solution::reportTestcases(std::vector<Testcase> &tcs){
-	std::map<std::string, std::string> par;
-	par["solution_id"] = std::to_string(id);
+	PostRq rq("/judger/list-testcases");
+	rq.addParam("solution_id", std::to_string(id));
 	for(auto &t: tcs){
+		rq.addParam("testcases[]", t.name);
 	}
-
+	Json::Value v = rq.post();
+	DLOG(INFO)<<v;
 }

@@ -23,6 +23,7 @@
 #include <sys/resource.h>
 #include <filesystem>
 #include <seccomp.h>
+#include <dirent.h>
 
 const static int COMPILE_TIME = 60;
 const static int COMPILE_FILE_SIZE = 10 * STD_MB;
@@ -131,7 +132,8 @@ void SandBox::apply_seccomp(){
 	const int whitelist[] = {SCMP_SYS(brk), SCMP_SYS(readlink), SCMP_SYS(read),
 		SCMP_SYS(newfstatat), SCMP_SYS(write), SCMP_SYS(mprotect),
 		SCMP_SYS(arch_prctl), SCMP_SYS(lseek), SCMP_SYS(uname),
-		SCMP_SYS(execve), SCMP_SYS(exit_group)};
+		SCMP_SYS(execve), SCMP_SYS(exit_group),
+		SCMP_SYS(ioctl), SCMP_SYS(rt_sigaction), SCMP_SYS(getrlimit)};
 
 	for(int syscall: whitelist){
 		seccomp_rule_add(ctx, SCMP_ACT_ALLOW, syscall, 0);
@@ -150,16 +152,20 @@ void SandBox::prepare_compile_files(const Solution &solution){
 	FILE *fsrc = fopen(solution.srcFileName, "w");
 	fputs(solution.code.c_str(), fsrc);
 	fclose(fsrc);
-	compile_files.push_back(solution.srcFileName);
-	compile_files.push_back("ce.txt");
 	safecall(chdir, "..");
 }
 
 void SandBox::clear_compile_files(){
 	safecall(chdir, "./compile");
-	for(auto &f: compile_files){
-		safecall(unlink, f.c_str());
+
+	DIR *dp = opendir("./");
+	dirent *dirp;
+	if(dp == NULL) LOG(FATAL)<<"failed open compile directory";
+	while((dirp = readdir(dp)) != NULL){
+		if(dirp->d_type != DT_REG) continue; // skip if not a regular file
+		safecall(unlink, dirp->d_name);
 	}
+
 	safecall(chdir, "..");
 	LOG(WARNING)<<"clear compile files";
 }
@@ -228,6 +234,7 @@ void SandBox::run_testcase(Testcase &testcase){
 	}
 
 	testcase.time_used = usage.ru_utime.tv_sec * (1000000ll) + usage.ru_utime.tv_usec;
+	DLOG(INFO)<<"time used: "<<testcase.time_used;
 	testcase.memory_used = usage.ru_maxrss;
 
 	if(WIFEXITED(status) && (WEXITSTATUS(status) == 0)){
