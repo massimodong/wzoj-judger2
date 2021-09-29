@@ -25,16 +25,18 @@
 class CpuSetManager
 {
 public:
-	CpuSetManager();
-	~CpuSetManager();
-	void use();
+	static CpuSetManager& getInstance();
 	int grab();
 	void release(int cpuid);
 
 protected:
 
 private:
-	int ncpu, nworkcpu;
+	CpuSetManager();
+	~CpuSetManager();
+
+	int ncpu;
+	char **setpath;
 	std::vector<int> idle_cpus;
 	std::queue<int> ready_cpus;
 	int nwaiting_tasks;
@@ -42,7 +44,7 @@ private:
 	std::condition_variable cv;
 
 	void idle2ready(int);
-	void ready2idle(int);
+	void makeidle(int);
 	void updateIdleCpus();
 };
 

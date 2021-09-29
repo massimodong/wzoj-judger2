@@ -38,7 +38,6 @@ public:
 protected:
 
 private:
-	 CpuSetManager cpusetManager;
 	 SolutionsListener solutionsListener;
 	 std::vector<JudgeWorker> judgeWorkers;
 	 

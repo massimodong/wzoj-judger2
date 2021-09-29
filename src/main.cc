@@ -88,6 +88,9 @@ int main(int argc, char* argv[])
 	*/
 
 	safecall(chdir, OJ_HOME);
+	safecall(unshare, CLONE_FS);
+
+	CpuSetManager::getInstance(); //initialize
 
 	Judger judger;
 

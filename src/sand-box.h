@@ -21,6 +21,7 @@
 #define _SAND_BOX_H_
 
 #include "solution.h"
+#include "cpu-set-manager.h"
 
 class Testcase;
 
@@ -42,7 +43,7 @@ private:
 	void clear_compile_files();
 	bool compile(int language);
 	[[ noreturn ]] void executeCompile(int language);
-	[[ noreturn ]] void executeRunTestcase();
+	[[ noreturn ]] void executeRunTestcase(uint64_t, double);
 
 };
 

@@ -62,6 +62,7 @@ void Testcase::wait(){
 
 void Testcase::rate(int fdout){
 	int fdans = open(fout, O_RDONLY);
+	if(fdans == -1) LOG(FATAL)<<"failed opening file "<<fout<<": "<<strerror(errno);
 	Comparer cp1(fdans), cp2(fdout);
 
 	if(cp1 == cp2){

@@ -77,6 +77,12 @@ static std::string readFile(const std::string &fileName)
     return std::string(&bytes[0], fileSize);
 }
 
+static void writeFile(const std::string &fileName, const std::string &str)
+{
+    std::ofstream ofs(fileName.c_str(), std::ios::out);
+	ofs<<str;
+}
+
 static void dpause(){
 	int t;
 	std::cout<<"pause"<<std::endl;

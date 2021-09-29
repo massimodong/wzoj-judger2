@@ -37,7 +37,8 @@ public:
 	char *name, *fin, *fout;
 	const Solution &solution;
 
-	uint64_t time_used, memory_used;
+	uint64_t time_used;
+	double memory_used;
 	int score;
 	std::string verdict;
 protected:

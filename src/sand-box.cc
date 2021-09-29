@@ -25,9 +25,10 @@
 #include <seccomp.h>
 #include <dirent.h>
 
-const static int COMPILE_TIME = 60;
-const static int COMPILE_FILE_SIZE = 10 * STD_MB;
-const static int COMPILE_MEMORY = 256 * STD_MB;
+const static uint64_t COMPILE_TIME = 60;
+const static uint64_t COMPILE_FILE_SIZE = 10 * STD_MB;
+const static uint64_t COMPILE_MEMORY = 256 * STD_MB;
+const static uint64_t RUN_FILE_SIZE = 2048 * STD_MB;
 
 #define BINDDIRS(ACTION)\
 	ACTION("bin");\
@@ -213,6 +214,7 @@ bool SandBox::compile(int language){
 }
 
 void SandBox::run_testcase(Testcase &testcase){
+	safecall(unshare, CLONE_FS);
 	safecall(chdir, "run");
 	safecall(mkdir, testcase.name, S_IRWXU);
 	safecall(chown, testcase.name, JUDGER_UID, JUDGER_UID);
@@ -220,31 +222,43 @@ void SandBox::run_testcase(Testcase &testcase){
 	std::filesystem::copy_file(testcase.fin, "data.in");
 	std::filesystem::copy_file("../../Main", "Main");
 
+	uint64_t timelimit = testcase.solution.problem.timelimit; // ms
+	double memorylimit = testcase.solution.problem.memorylimit; // MB
+
 	dpause();
 
 	int status = 0;
 	struct rusage usage;
-	
+
+	//int cid = CpuSetManager::getInstance().grab();
 	pid_t pid = fork_safe();
 	if(pid == 0){
-		executeRunTestcase();
-	}else{
-		safecall(wait4, pid, &status, 0, &usage);
-		dpause();
+		executeRunTestcase(timelimit, memorylimit);
 	}
 
-	testcase.time_used = usage.ru_utime.tv_sec * (1000000ll) + usage.ru_utime.tv_usec;
-	DLOG(INFO)<<"time used: "<<testcase.time_used;
-	testcase.memory_used = usage.ru_maxrss;
+	safecall(wait4, pid, &status, 0, &usage);
+	//CpuSetManager::getInstance().release(cid);
+	dpause();
 
-	if(WIFEXITED(status) && (WEXITSTATUS(status) == 0)){
+	testcase.time_used = usage.ru_utime.tv_sec * (1000ll) + usage.ru_utime.tv_usec/1000;
+	DLOG(INFO)<<"time used: "<<testcase.time_used;
+	testcase.memory_used = usage.ru_maxrss / (double)STD_MB;
+	DLOG(INFO)<<"memory used: "<<testcase.memory_used;
+
+	if(testcase.time_used > timelimit){
+		testcase.verdict = "TLE";
+		testcase.score = 0;
+	}else if(testcase.memory_used > memorylimit){
+		testcase.verdict = "MLE";
+		testcase.score = 0;
+	}else if(WIFEXITED(status) && (WEXITSTATUS(status) == 0)){
 		int fdout = open("data.out", O_RDONLY);
 		if(fdout == -1) LOG(FATAL)<<"Failed to open data.out";
 		testcase.rate(fdout);
 		safecall(close, fdout);
 	}else{ // RE
 		testcase.verdict = "RE";
-		testcase.score = 100;
+		testcase.score = 0;
 	}
 
 	safecall(unlink, "Main");
@@ -256,12 +270,23 @@ void SandBox::run_testcase(Testcase &testcase){
 	safecall(chdir, "..");
 }
 
-[[ noreturn ]] void SandBox::executeRunTestcase(){
+[[ noreturn ]] void SandBox::executeRunTestcase(uint64_t timelimit, double memorylimit){
 	const char * Main[] = { "./Main", NULL };
+	uint64_t rtimelimit = timelimit * 2 / 1000; // seconds
+	uint64_t rmemorylimit = memorylimit * STD_MB * 2;
+	DLOG(INFO)<<"rtimelimit: "<<rtimelimit;
+	DLOG(INFO)<<"rmemorylimit: "<<rmemorylimit;
+	/*
+	DLOG(INFO)<<"rfilesize: "<<RUN_FILE_SIZE;
+	DLOG(INFO)<<"ctimelimit: "<<COMPILE_TIME;
+	DLOG(INFO)<<"cmemorylimit: "<<COMPILE_MEMORY;
+	*/
+
 	safecall_err(NULL, freopen, "data.in", "r", stdin);
 	safecall_err(NULL, freopen, "data.out", "w", stdout);
 	safecall_err(NULL, freopen, "re.txt", "w", stderr);
-	setlimits(COMPILE_TIME, COMPILE_MEMORY, COMPILE_FILE_SIZE);
+
+	setlimits(rtimelimit, rmemorylimit, RUN_FILE_SIZE);
 	apply_seccomp();
 	safecall(execvp, Main[0], (char * const *)Main);
 	LOG(FATAL)<<"should not reach here";

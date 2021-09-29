@@ -76,10 +76,10 @@ static void readTestcases(const Solution &solution, std::vector<Testcase> &tcs){
 			std::string tnameOut = path + ("/" + tname + ".out");
 			std::string tnameAns = path + ("/" + tname + ".ans");
 
-			if(access(tnameOut.c_str(), F_OK)){
+			if(access(tnameOut.c_str(), F_OK) == 0){
 				tcs.emplace_back(tname.c_str(), tnameIn.c_str(), tnameOut.c_str(), std::ref(solution));
 				DLOG(INFO)<<"emememe";
-			}else if(access(tnameAns.c_str(), F_OK)){
+			}else if(access(tnameAns.c_str(), F_OK) == 0){
 				tcs.emplace_back(tname.c_str(), tnameIn.c_str(), tnameAns.c_str(), std::ref(solution));
 				DLOG(INFO)<<"mememem";
 			}else{
@@ -109,12 +109,10 @@ void JudgeWorker::judge(int sid){
 
 	for(auto &t: testcases){
 		t.run(sandbox);
-		break;
 	}
 
 	for(auto &t: testcases){
 		t.wait();
-		break;
 	}
 
 	safecall(unlink, "Main");

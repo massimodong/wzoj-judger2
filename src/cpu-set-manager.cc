@@ -22,14 +22,25 @@
 
 #include <sys/sysinfo.h>
 
+CpuSetManager& CpuSetManager::getInstance(){
+	static CpuSetManager theInstance;
+	return theInstance;
+}
+
+static void moveTasks(const char *from, const char *to){
+	std::ifstream iftasks(from, std::ios::in);
+	while(!iftasks.eof()){
+		std::string task;
+		iftasks>>task;
+		writeFile(to, task);
+	}
+}
+
 CpuSetManager::CpuSetManager(){
-	/*
 	std::lock_guard<std::mutex> lk(mutex);
 	ncpu = get_nprocs();
 	
 	LOG(INFO)<<"There are total "<<ncpu<<" cpus";
-	nworkcpu = ncpu - 1;
-	LOG(INFO)<<"Using "<<nworkcpu<<" cpus as working cpu";
 
 	if(mkdir("/dev/cpuset", S_IRWXU))
 		LOG(FATAL)<<"Failed creating directory /dev/cpuset: "
@@ -39,24 +50,44 @@ CpuSetManager::CpuSetManager(){
 	safecall(mount, "cputset", "/dev/cpuset", "cpuset", 0, NULL);
 
 	safecall(mkdir, "/dev/cpuset/idleset", S_IRWXU);
-	//safecall(mkdir, "/dev/cpuset/")
 
-	for(int i=0;i<nworkcpu;++i) idle_cpus.emplace_back(i);
+	for(int i=1;i<ncpu;++i) idle_cpus.emplace_back(i);
 	nwaiting_tasks = 0;
 
+	setpath = (char **)malloc(sizeof(char *) * ncpu);
+	for(int i=0;i<ncpu;++i){
+		asprintf(setpath + i, "/dev/cpuset/set%d", i);
+		safecall(mkdir, setpath[i], S_IRWXU);
+		writeFile((setpath[i] + std::string("/cpus")).c_str(), std::to_string(i));
+	}
 	updateIdleCpus();
-	*/
+
+	std::string mems;
+	std::ifstream ifs("/dev/cpuset/mems", std::ios::in);
+	ifs>>mems;
+	DLOG(INFO)<<"mems: "<<mems;
+	writeFile("/dev/cpuset/idleset/mems", mems);
+	for(int i=0;i<ncpu;++i){
+		writeFile((setpath[i] + std::string("/mems")).c_str(), mems);
+	}
+
+	moveTasks("/dev/cpuset/tasks", "/dev/cpuset/idleset/tasks");
+	dpause();
 };
 
 CpuSetManager::~CpuSetManager(){
-	/*
 	std::lock_guard<std::mutex> lk(mutex);
+
+	moveTasks("/dev/cpuset/idleset/tasks", "/dev/cpuset/tasks");
+
+	safecall(rmdir, "/dev/cpuset/idleset");
+	for(int i=0;i<ncpu;++i) safecall(rmdir, setpath[i]);
+
 	safecall(umount, "/dev/cpuset");
 	safecall(rmdir, "/dev/cpuset");
-	*/
-}
 
-void CpuSetManager::use(){
+	for(int i=0;i<ncpu;++i) free(setpath[i]);
+	free(setpath);
 }
 
 int CpuSetManager::grab(){
@@ -81,7 +112,7 @@ void CpuSetManager::release(int cpuid){
 	if(nwaiting_tasks > ready_cpus.size()){
 		ready_cpus.push(cpuid);
 	}else{
-		ready2idle(cpuid);
+		makeidle(cpuid);
 	}
 }
 
@@ -94,10 +125,15 @@ void CpuSetManager::idle2ready(int n){
 	updateIdleCpus();
 }
 
-void CpuSetManager::ready2idle(int cpu_id){
+void CpuSetManager::makeidle(int cpu_id){
 	idle_cpus.emplace_back(cpu_id);
 	updateIdleCpus();
 }
 
 void CpuSetManager::updateIdleCpus(){
+	std::string s("0");
+	for(auto n: idle_cpus){
+		s += "," + std::to_string(n);
+	}
+	writeFile("/dev/cpuset/idleset/cpus", s);
 }

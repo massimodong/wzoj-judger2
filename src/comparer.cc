@@ -71,7 +71,7 @@ void Comparer::fill_buffer(){
 	if(buffer_size > 0 && buffer[0] == EOF) LOG(FATAL)<<"reaing already EOF file.";
 
 	buffer_size = read(fd, buffer, COMP_BUFF_SIZE);
-	if(buffer_size == -1) LOG(FATAL)<<"failed reading files";
+	if(buffer_size == -1) LOG(FATAL)<<"failed reading files: "<<strerror(errno);
 	else if(buffer_size == 0) buffer[buffer_size++] = EOF;
 
 	pos = 0;
