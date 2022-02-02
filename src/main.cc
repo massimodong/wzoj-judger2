@@ -19,10 +19,10 @@
 
 #include "judger.h"
 #include "common.h"
+#include "w-server.h"
+
 #include <getopt.h>
 #include <signal.h>
-
-#include "hiredis.h"
 
 volatile bool OJ_RUNNING = true;
 
@@ -90,24 +90,10 @@ int main(int argc, char* argv[])
 	safecall(chdir, OJ_HOME);
 	safecall(unshare, CLONE_FS);
 
-	CpuSetManager::getInstance(); //initialize
+	//CpuSetManager::getInstance(); //initialize
 
-	Judger judger;
-
-	//judger.run_once(295495);
-	//judger.run_once(601828);
-	judger.run_once(601836);
-	//judger.run_once(601842);
-
+	WServer wserver;
+	wserver.Run();
 	return 0;
-
-	/*
-	if(run_once){
-	}else{
-		judger.work();
-	}
-	
-	return 0;
-	*/
 }
 

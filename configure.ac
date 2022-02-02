@@ -31,7 +31,10 @@ AM_GLIB_GNU_GETTEXT
 LT_INIT
 
 
-PKG_CHECK_MODULES(WZOJ_JUDGER2, libseccomp
+PKG_CHECK_MODULES(WZOJ_JUDGER2, protobuf
+grpc++
+grpc
+libseccomp
 hiredis
 libcurl
 [libglog ])

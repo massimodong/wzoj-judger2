@@ -5,6 +5,7 @@
 AM_CPPFLAGS = \
 	-DPACKAGE_LOCALE_DIR=\""$(localedir)"\" \
 	-DPACKAGE_SRC_DIR=\""$(srcdir). \
+	$(hiredis_CFLAGS). \
 	$(LIBCURL_CFLAGS). \
 	$(libcurl_CFLAGS)"\" \
 	-DPACKAGE_DATA_DIR=\""$(pkgdatadir)"\" \
@@ -49,7 +50,13 @@ wzoj_judger2_SOURCES = \
 	post-rq.cc \
 	post-rq.h \
 	comparer.cc \
-	comparer.h
+	comparer.h \
+	wjudger.pb.h \
+	wjudger.pb.cc \
+	wjudger.grpc.pb.h \
+	wjudger.grpc.pb.cc \
+	w-server.cc \
+	w-server.h
 
 wzoj_judger2_CXXFLAGS = -lpthread 
 
@@ -57,6 +64,7 @@ wzoj_judger2_LDFLAGS =
 
 wzoj_judger2_LDADD = $(WZOJ_JUDGER2_LIBS) \
 	$(libcurl_LIBS) \
-	$(LIBCURL_LIBS)
+	$(LIBCURL_LIBS) \
+	$(hiredis_LIBS)
 
 
