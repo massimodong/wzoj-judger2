@@ -35,8 +35,6 @@ PKG_CHECK_MODULES(WZOJ_JUDGER2, protobuf
 grpc++
 grpc
 libseccomp
-hiredis
-libcurl
 [libglog ])
 
 
