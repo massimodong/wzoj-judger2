@@ -19,38 +19,7 @@ bin_PROGRAMS = wzoj_judger2
 
 wzoj_judger2_SOURCES = \
 	main.cc \
-	cpu-set-manager.cc \
-	cpu-set-manager.h \
 	common.h \
-	judger.cc \
-	judger.h \
-	remote-object.cc \
-	remote-object.h \
-	problem.cc \
-	problem.h \
-	http.cc \
-	http.h \
-	json.h \
-	json-forwards.h \
-	jsoncpp.cpp \
-	solutions-listener.cc \
-	solutions-listener.h \
-	judge-worker.cc \
-	judge-worker.h \
-	solution.cc \
-	solution.h \
-	sand-box.cc \
-	sand-box.h \
-	testcase.cc \
-	testcase.h \
-	get-rq.cc \
-	get-rq.h \
-	request.cc \
-	request.h \
-	post-rq.cc \
-	post-rq.h \
-	comparer.cc \
-	comparer.h \
 	wjudger.pb.h \
 	wjudger.pb.cc \
 	wjudger.grpc.pb.h \
