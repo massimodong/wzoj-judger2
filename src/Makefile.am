@@ -31,9 +31,5 @@ wzoj_judger2_CXXFLAGS = -lpthread
 
 wzoj_judger2_LDFLAGS = 
 
-wzoj_judger2_LDADD = $(WZOJ_JUDGER2_LIBS) \
-	$(libcurl_LIBS) \
-	$(LIBCURL_LIBS) \
-	$(hiredis_LIBS)
-
+wzoj_judger2_LDADD = $(WZOJ_JUDGER2_LIBS)
 

@@ -17,7 +17,6 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "judger.h"
 #include "common.h"
 #include "w-server.h"
 
