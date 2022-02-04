@@ -33,7 +33,6 @@ LT_INIT
 
 PKG_CHECK_MODULES(WZOJ_JUDGER2, protobuf
 grpc++
-grpc
 libseccomp
 [libglog ])
 
