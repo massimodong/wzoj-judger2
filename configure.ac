@@ -31,7 +31,8 @@ AM_GLIB_GNU_GETTEXT
 LT_INIT
 
 
-PKG_CHECK_MODULES(WZOJ_JUDGER2, protobuf
+PKG_CHECK_MODULES(WZOJ_JUDGER2, libconfig++
+protobuf
 grpc++
 libseccomp
 [libglog ])

@@ -14,6 +14,7 @@
 
 @SET_MAKE@
 
+
 VPATH = @srcdir@
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
@@ -99,12 +100,53 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am__installdirs = "$(DESTDIR)$(bindir)"
+am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(libdir)"
 PROGRAMS = $(bin_PROGRAMS)
+am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
+am__vpath_adj = case $$p in \
+    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
+    *) f=$$p;; \
+  esac;
+am__strip_dir = f=`echo $$p | sed -e 's|^.*/||'`;
+am__install_max = 40
+am__nobase_strip_setup = \
+  srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*|]/\\\\&/g'`
+am__nobase_strip = \
+  for p in $$list; do echo "$$p"; done | sed -e "s|$$srcdirstrip/||"
+am__nobase_list = $(am__nobase_strip_setup); \
+  for p in $$list; do echo "$$p $$p"; done | \
+  sed "s| $$srcdirstrip/| |;"' / .*\//!s/ .*/ ./; s,\( .*\)/[^/]*$$,\1,' | \
+  $(AWK) 'BEGIN { files["."] = "" } { files[$$2] = files[$$2] " " $$1; \
+    if (++n[$$2] == $(am__install_max)) \
+      { print $$2, files[$$2]; n[$$2] = 0; files[$$2] = "" } } \
+    END { for (dir in files) print dir, files[dir] }'
+am__base_list = \
+  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
+  sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
+am__uninstall_files_from_dir = { \
+  test -z "$$files" \
+    || { test ! -d "$$dir" && test ! -f "$$dir" && test ! -r "$$dir"; } \
+    || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
+         $(am__cd) "$$dir" && rm -f $$files; }; \
+  }
+LIBRARIES = $(lib_LIBRARIES)
+ARFLAGS = cru
+AM_V_AR = $(am__v_AR_@AM_V@)
+am__v_AR_ = $(am__v_AR_@AM_DEFAULT_V@)
+am__v_AR_0 = @echo "  AR      " $@;
+am__v_AR_1 = 
+libwjudger_seccomp_loader_a_AR = $(AR) $(ARFLAGS)
+libwjudger_seccomp_loader_a_LIBADD =
+am_libwjudger_seccomp_loader_a_OBJECTS =  \
+	libwjudger_seccomp_loader.$(OBJEXT)
+libwjudger_seccomp_loader_a_OBJECTS =  \
+	$(am_libwjudger_seccomp_loader_a_OBJECTS)
 am_wzoj_judger2_OBJECTS = wzoj_judger2-main.$(OBJEXT) \
 	wzoj_judger2-wjudger.pb.$(OBJEXT) \
 	wzoj_judger2-wjudger.grpc.pb.$(OBJEXT) \
-	wzoj_judger2-w-server.$(OBJEXT)
+	wzoj_judger2-w-server.$(OBJEXT) wzoj_judger2-judger.$(OBJEXT) \
+	wzoj_judger2-judge-task.$(OBJEXT) \
+	wzoj_judger2-sandbox.$(OBJEXT)
 wzoj_judger2_OBJECTS = $(am_wzoj_judger2_OBJECTS)
 am__DEPENDENCIES_1 =
 wzoj_judger2_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -130,29 +172,15 @@ am__v_at_1 =
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
-am__depfiles_remade = ./$(DEPDIR)/wzoj_judger2-main.Po \
+am__depfiles_remade = ./$(DEPDIR)/libwjudger_seccomp_loader.Po \
+	./$(DEPDIR)/wzoj_judger2-judge-task.Po \
+	./$(DEPDIR)/wzoj_judger2-judger.Po \
+	./$(DEPDIR)/wzoj_judger2-main.Po \
+	./$(DEPDIR)/wzoj_judger2-sandbox.Po \
 	./$(DEPDIR)/wzoj_judger2-w-server.Po \
 	./$(DEPDIR)/wzoj_judger2-wjudger.grpc.pb.Po \
 	./$(DEPDIR)/wzoj_judger2-wjudger.pb.Po
 am__mv = mv -f
-CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
-LTCXXCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) \
-	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
-	$(AM_CXXFLAGS) $(CXXFLAGS)
-AM_V_CXX = $(am__v_CXX_@AM_V@)
-am__v_CXX_ = $(am__v_CXX_@AM_DEFAULT_V@)
-am__v_CXX_0 = @echo "  CXX     " $@;
-am__v_CXX_1 = 
-CXXLD = $(CXX)
-CXXLINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
-am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
-am__v_CXXLD_0 = @echo "  CXXLD   " $@;
-am__v_CXXLD_1 = 
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
@@ -171,8 +199,28 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(wzoj_judger2_SOURCES)
-DIST_SOURCES = $(wzoj_judger2_SOURCES)
+CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+LTCXXCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CXXFLAGS) $(CXXFLAGS)
+AM_V_CXX = $(am__v_CXX_@AM_V@)
+am__v_CXX_ = $(am__v_CXX_@AM_DEFAULT_V@)
+am__v_CXX_0 = @echo "  CXX     " $@;
+am__v_CXX_1 = 
+CXXLD = $(CXX)
+CXXLINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
+	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
+am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
+am__v_CXXLD_0 = @echo "  CXXLD   " $@;
+am__v_CXXLD_1 = 
+SOURCES = $(libwjudger_seccomp_loader_a_SOURCES) \
+	$(wzoj_judger2_SOURCES)
+DIST_SOURCES = $(libwjudger_seccomp_loader_a_SOURCES) \
+	$(wzoj_judger2_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -376,15 +424,28 @@ wzoj_judger2_SOURCES = \
 	wjudger.grpc.pb.h \
 	wjudger.grpc.pb.cc \
 	w-server.cc \
-	w-server.h
+	w-server.h \
+	judger.cc \
+	judger.h \
+	judge-task.cc \
+	judge-task.h \
+	sandbox.cc \
+	sandbox.h \
+	syscall_whitelist.h
 
 wzoj_judger2_CXXFLAGS = -lpthread 
 wzoj_judger2_LDFLAGS = 
 wzoj_judger2_LDADD = $(WZOJ_JUDGER2_LIBS)
+lib_LIBRARIES = \
+	libwjudger_seccomp_loader.a
+
+libwjudger_seccomp_loader_a_SOURCES = \
+	libwjudger_seccomp_loader.c
+
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .cc .lo .o .obj
+.SUFFIXES: .c .cc .lo .o .obj
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -463,6 +524,42 @@ clean-binPROGRAMS:
 	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
 	echo " rm -f" $$list; \
 	rm -f $$list
+install-libLIBRARIES: $(lib_LIBRARIES)
+	@$(NORMAL_INSTALL)
+	@list='$(lib_LIBRARIES)'; test -n "$(libdir)" || list=; \
+	list2=; for p in $$list; do \
+	  if test -f $$p; then \
+	    list2="$$list2 $$p"; \
+	  else :; fi; \
+	done; \
+	test -z "$$list2" || { \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(libdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(libdir)" || exit 1; \
+	  echo " $(INSTALL_DATA) $$list2 '$(DESTDIR)$(libdir)'"; \
+	  $(INSTALL_DATA) $$list2 "$(DESTDIR)$(libdir)" || exit $$?; }
+	@$(POST_INSTALL)
+	@list='$(lib_LIBRARIES)'; test -n "$(libdir)" || list=; \
+	for p in $$list; do \
+	  if test -f $$p; then \
+	    $(am__strip_dir) \
+	    echo " ( cd '$(DESTDIR)$(libdir)' && $(RANLIB) $$f )"; \
+	    ( cd "$(DESTDIR)$(libdir)" && $(RANLIB) $$f ) || exit $$?; \
+	  else :; fi; \
+	done
+
+uninstall-libLIBRARIES:
+	@$(NORMAL_UNINSTALL)
+	@list='$(lib_LIBRARIES)'; test -n "$(libdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(libdir)'; $(am__uninstall_files_from_dir)
+
+clean-libLIBRARIES:
+	-test -z "$(lib_LIBRARIES)" || rm -f $(lib_LIBRARIES)
+
+libwjudger_seccomp_loader.a: $(libwjudger_seccomp_loader_a_OBJECTS) $(libwjudger_seccomp_loader_a_DEPENDENCIES) $(EXTRA_libwjudger_seccomp_loader_a_DEPENDENCIES) 
+	$(AM_V_at)-rm -f libwjudger_seccomp_loader.a
+	$(AM_V_AR)$(libwjudger_seccomp_loader_a_AR) libwjudger_seccomp_loader.a $(libwjudger_seccomp_loader_a_OBJECTS) $(libwjudger_seccomp_loader_a_LIBADD)
+	$(AM_V_at)$(RANLIB) libwjudger_seccomp_loader.a
 
 wzoj_judger2$(EXEEXT): $(wzoj_judger2_OBJECTS) $(wzoj_judger2_DEPENDENCIES) $(EXTRA_wzoj_judger2_DEPENDENCIES) 
 	@rm -f wzoj_judger2$(EXEEXT)
@@ -474,7 +571,11 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libwjudger_seccomp_loader.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wzoj_judger2-judge-task.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wzoj_judger2-judger.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wzoj_judger2-main.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wzoj_judger2-sandbox.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wzoj_judger2-w-server.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wzoj_judger2-wjudger.grpc.pb.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wzoj_judger2-wjudger.pb.Po@am__quote@ # am--include-marker
@@ -484,6 +585,27 @@ $(am__depfiles_remade):
 	@echo '# dummy' >$@-t && $(am__mv) $@-t $@
 
 am--depfiles: $(am__depfiles_remade)
+
+.c.o:
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ $<
+
+.c.obj:
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+.c.lo:
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
 
 .cc.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -561,6 +683,48 @@ wzoj_judger2-w-server.obj: w-server.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='w-server.cc' object='wzoj_judger2-w-server.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wzoj_judger2_CXXFLAGS) $(CXXFLAGS) -c -o wzoj_judger2-w-server.obj `if test -f 'w-server.cc'; then $(CYGPATH_W) 'w-server.cc'; else $(CYGPATH_W) '$(srcdir)/w-server.cc'; fi`
+
+wzoj_judger2-judger.o: judger.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wzoj_judger2_CXXFLAGS) $(CXXFLAGS) -MT wzoj_judger2-judger.o -MD -MP -MF $(DEPDIR)/wzoj_judger2-judger.Tpo -c -o wzoj_judger2-judger.o `test -f 'judger.cc' || echo '$(srcdir)/'`judger.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/wzoj_judger2-judger.Tpo $(DEPDIR)/wzoj_judger2-judger.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='judger.cc' object='wzoj_judger2-judger.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wzoj_judger2_CXXFLAGS) $(CXXFLAGS) -c -o wzoj_judger2-judger.o `test -f 'judger.cc' || echo '$(srcdir)/'`judger.cc
+
+wzoj_judger2-judger.obj: judger.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wzoj_judger2_CXXFLAGS) $(CXXFLAGS) -MT wzoj_judger2-judger.obj -MD -MP -MF $(DEPDIR)/wzoj_judger2-judger.Tpo -c -o wzoj_judger2-judger.obj `if test -f 'judger.cc'; then $(CYGPATH_W) 'judger.cc'; else $(CYGPATH_W) '$(srcdir)/judger.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/wzoj_judger2-judger.Tpo $(DEPDIR)/wzoj_judger2-judger.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='judger.cc' object='wzoj_judger2-judger.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wzoj_judger2_CXXFLAGS) $(CXXFLAGS) -c -o wzoj_judger2-judger.obj `if test -f 'judger.cc'; then $(CYGPATH_W) 'judger.cc'; else $(CYGPATH_W) '$(srcdir)/judger.cc'; fi`
+
+wzoj_judger2-judge-task.o: judge-task.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wzoj_judger2_CXXFLAGS) $(CXXFLAGS) -MT wzoj_judger2-judge-task.o -MD -MP -MF $(DEPDIR)/wzoj_judger2-judge-task.Tpo -c -o wzoj_judger2-judge-task.o `test -f 'judge-task.cc' || echo '$(srcdir)/'`judge-task.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/wzoj_judger2-judge-task.Tpo $(DEPDIR)/wzoj_judger2-judge-task.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='judge-task.cc' object='wzoj_judger2-judge-task.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wzoj_judger2_CXXFLAGS) $(CXXFLAGS) -c -o wzoj_judger2-judge-task.o `test -f 'judge-task.cc' || echo '$(srcdir)/'`judge-task.cc
+
+wzoj_judger2-judge-task.obj: judge-task.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wzoj_judger2_CXXFLAGS) $(CXXFLAGS) -MT wzoj_judger2-judge-task.obj -MD -MP -MF $(DEPDIR)/wzoj_judger2-judge-task.Tpo -c -o wzoj_judger2-judge-task.obj `if test -f 'judge-task.cc'; then $(CYGPATH_W) 'judge-task.cc'; else $(CYGPATH_W) '$(srcdir)/judge-task.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/wzoj_judger2-judge-task.Tpo $(DEPDIR)/wzoj_judger2-judge-task.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='judge-task.cc' object='wzoj_judger2-judge-task.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wzoj_judger2_CXXFLAGS) $(CXXFLAGS) -c -o wzoj_judger2-judge-task.obj `if test -f 'judge-task.cc'; then $(CYGPATH_W) 'judge-task.cc'; else $(CYGPATH_W) '$(srcdir)/judge-task.cc'; fi`
+
+wzoj_judger2-sandbox.o: sandbox.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wzoj_judger2_CXXFLAGS) $(CXXFLAGS) -MT wzoj_judger2-sandbox.o -MD -MP -MF $(DEPDIR)/wzoj_judger2-sandbox.Tpo -c -o wzoj_judger2-sandbox.o `test -f 'sandbox.cc' || echo '$(srcdir)/'`sandbox.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/wzoj_judger2-sandbox.Tpo $(DEPDIR)/wzoj_judger2-sandbox.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='sandbox.cc' object='wzoj_judger2-sandbox.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wzoj_judger2_CXXFLAGS) $(CXXFLAGS) -c -o wzoj_judger2-sandbox.o `test -f 'sandbox.cc' || echo '$(srcdir)/'`sandbox.cc
+
+wzoj_judger2-sandbox.obj: sandbox.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wzoj_judger2_CXXFLAGS) $(CXXFLAGS) -MT wzoj_judger2-sandbox.obj -MD -MP -MF $(DEPDIR)/wzoj_judger2-sandbox.Tpo -c -o wzoj_judger2-sandbox.obj `if test -f 'sandbox.cc'; then $(CYGPATH_W) 'sandbox.cc'; else $(CYGPATH_W) '$(srcdir)/sandbox.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/wzoj_judger2-sandbox.Tpo $(DEPDIR)/wzoj_judger2-sandbox.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='sandbox.cc' object='wzoj_judger2-sandbox.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(wzoj_judger2_CXXFLAGS) $(CXXFLAGS) -c -o wzoj_judger2-sandbox.obj `if test -f 'sandbox.cc'; then $(CYGPATH_W) 'sandbox.cc'; else $(CYGPATH_W) '$(srcdir)/sandbox.cc'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -654,9 +818,9 @@ distdir-am: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(PROGRAMS)
+all-am: Makefile $(PROGRAMS) $(LIBRARIES)
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)"; do \
+	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(libdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -691,10 +855,15 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-binPROGRAMS clean-generic clean-libtool mostlyclean-am
+clean-am: clean-binPROGRAMS clean-generic clean-libLIBRARIES \
+	clean-libtool mostlyclean-am
 
 distclean: distclean-am
-		-rm -f ./$(DEPDIR)/wzoj_judger2-main.Po
+		-rm -f ./$(DEPDIR)/libwjudger_seccomp_loader.Po
+	-rm -f ./$(DEPDIR)/wzoj_judger2-judge-task.Po
+	-rm -f ./$(DEPDIR)/wzoj_judger2-judger.Po
+	-rm -f ./$(DEPDIR)/wzoj_judger2-main.Po
+	-rm -f ./$(DEPDIR)/wzoj_judger2-sandbox.Po
 	-rm -f ./$(DEPDIR)/wzoj_judger2-w-server.Po
 	-rm -f ./$(DEPDIR)/wzoj_judger2-wjudger.grpc.pb.Po
 	-rm -f ./$(DEPDIR)/wzoj_judger2-wjudger.pb.Po
@@ -720,7 +889,7 @@ install-dvi: install-dvi-am
 
 install-dvi-am:
 
-install-exec-am: install-binPROGRAMS
+install-exec-am: install-binPROGRAMS install-libLIBRARIES
 
 install-html: install-html-am
 
@@ -743,7 +912,11 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-		-rm -f ./$(DEPDIR)/wzoj_judger2-main.Po
+		-rm -f ./$(DEPDIR)/libwjudger_seccomp_loader.Po
+	-rm -f ./$(DEPDIR)/wzoj_judger2-judge-task.Po
+	-rm -f ./$(DEPDIR)/wzoj_judger2-judger.Po
+	-rm -f ./$(DEPDIR)/wzoj_judger2-main.Po
+	-rm -f ./$(DEPDIR)/wzoj_judger2-sandbox.Po
 	-rm -f ./$(DEPDIR)/wzoj_judger2-w-server.Po
 	-rm -f ./$(DEPDIR)/wzoj_judger2-wjudger.grpc.pb.Po
 	-rm -f ./$(DEPDIR)/wzoj_judger2-wjudger.pb.Po
@@ -763,23 +936,25 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS
+uninstall-am: uninstall-binPROGRAMS uninstall-libLIBRARIES
 
 .MAKE: install-am install-strip
 
 .PHONY: CTAGS GTAGS TAGS all all-am am--depfiles check check-am clean \
-	clean-binPROGRAMS clean-generic clean-libtool cscopelist-am \
-	ctags ctags-am distclean distclean-compile distclean-generic \
-	distclean-libtool distclean-tags distdir dvi dvi-am html \
-	html-am info info-am install install-am install-binPROGRAMS \
-	install-data install-data-am install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man install-pdf \
+	clean-binPROGRAMS clean-generic clean-libLIBRARIES \
+	clean-libtool cscopelist-am ctags ctags-am distclean \
+	distclean-compile distclean-generic distclean-libtool \
+	distclean-tags distdir dvi dvi-am html html-am info info-am \
+	install install-am install-binPROGRAMS install-data \
+	install-data-am install-dvi install-dvi-am install-exec \
+	install-exec-am install-html install-html-am install-info \
+	install-info-am install-libLIBRARIES install-man install-pdf \
 	install-pdf-am install-ps install-ps-am install-strip \
 	installcheck installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags tags-am uninstall uninstall-am uninstall-binPROGRAMS
+	tags tags-am uninstall uninstall-am uninstall-binPROGRAMS \
+	uninstall-libLIBRARIES
 
 .PRECIOUS: Makefile
 

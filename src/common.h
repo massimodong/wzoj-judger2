@@ -39,8 +39,10 @@
 #include <mutex>
 #include <condition_variable>
 
-extern volatile bool OJ_RUNNING;
+extern bool OJ_SHUTDOWN;
+void oj_wait_shutdown();
 
+extern const char *OJ_CONFIG_DIR;
 extern const char *OJ_HOME;
 extern int OJ_SLEEP_TIME;
 extern int OJ_CNT_WORKERS;
@@ -57,6 +59,9 @@ const int OJ_LANGUAGE_JAVA = 3;
 const int OJ_LANGUAGE_PYTHON = 4;
 const int OJ_PROBLEM_TYPE_INTERACT = 2;
 const int OJ_PROBLEM_TYPE_SUBMIT_SOLUTION = 3;
+
+#define IDENTITY_MACRO(x) x
+#define MAKEARRAY(items) {items(IDENTITY_MACRO)}
 
 #define safecall_err(err, fun, ...) if(fun(__VA_ARGS__) == err)\
   LOG(FATAL)<<#fun<<" "<<#__VA_ARGS__<<": "<<strerror(errno);

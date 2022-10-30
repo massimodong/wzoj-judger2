@@ -25,7 +25,14 @@ wzoj_judger2_SOURCES = \
 	wjudger.grpc.pb.h \
 	wjudger.grpc.pb.cc \
 	w-server.cc \
-	w-server.h
+	w-server.h \
+	judger.cc \
+	judger.h \
+	judge-task.cc \
+	judge-task.h \
+	sandbox.cc \
+	sandbox.h \
+	syscall_whitelist.h
 
 wzoj_judger2_CXXFLAGS = -lpthread 
 
@@ -33,3 +40,9 @@ wzoj_judger2_LDFLAGS =
 
 wzoj_judger2_LDADD = $(WZOJ_JUDGER2_LIBS)
 
+
+lib_LIBRARIES =  \
+	libwjudger_seccomp_loader.a
+
+libwjudger_seccomp_loader_a_SOURCES =  \
+	libwjudger_seccomp_loader.c

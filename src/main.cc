@@ -19,19 +19,29 @@
 
 #include "common.h"
 #include "w-server.h"
+#include "judger.h"
 
 #include <getopt.h>
 #include <signal.h>
+#include <libconfig.h++>
 
-volatile bool OJ_RUNNING = true;
+bool OJ_SHUTDOWN = false;
+std::condition_variable SHUTDOWN_CV;
+std::mutex SHUTDOWN_MUTEX;
 
+void oj_wait_shutdown(){
+	std::unique_lock<std::mutex> lk(SHUTDOWN_MUTEX);
+	SHUTDOWN_CV.wait(lk, []{return OJ_SHUTDOWN;});
+}
+
+const char *OJ_CONFIG_DIR = "/etc/wjudger";
 const char *OJ_HOME = "/home/judger";
 int OJ_SLEEP_TIME = 1;
 int OJ_CNT_WORKERS = 1;
 const char *OJ_URL = "localhost:8080/";
 const char *OJ_TOKEN = "123456";
 
-void print_help(const char *name){
+static void print_help(const char *name){
 	printf("Usage: %s [options]\n", name);
 	printf("Options:\n");
 	printf("-h, --help\t\tDisplay help message.\n");
@@ -39,12 +49,36 @@ void print_help(const char *name){
 	printf("-i, --once\t\tRun once: judge one solution and exit.\n");
 }
 
-void print_version(const char *name){
+static void print_version(const char *name){
 }
 
 void call_for_exit(int s){
-	OJ_RUNNING = false;
 	DLOG(WARNING)<<"Shutting down...";
+	{
+		std::lock_guard<std::mutex> lk(SHUTDOWN_MUTEX);
+		OJ_SHUTDOWN = true;
+	}
+	SHUTDOWN_CV.notify_all();
+}
+
+static std::unique_ptr<std::vector<Judger>> readConfig(){
+	std::unique_ptr<std::vector<Judger>> judgers = std::make_unique<std::vector<Judger>>();
+	libconfig::Config cfg;
+	cfg.setIncludeDir(OJ_CONFIG_DIR);
+	cfg.readFile((OJ_CONFIG_DIR + std::string("/wjudger.cfg")).c_str());
+	const libconfig::Setting& root = cfg.getRoot();
+
+	if(!root["judgers"].isArray()){
+		LOG(FATAL)<<"judgers should be an array!";
+	}
+
+	int judgers_length = root["judgers"].getLength();
+
+	for(int i=0;i<judgers_length;++i){
+		std::string name = std::string(root["judgers"][i]);
+		judgers->emplace_back(name, root[name]);
+	}
+	return judgers;
 }
 
 int main(int argc, char* argv[])
@@ -76,7 +110,6 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	/*
 	struct sigaction new_action;
 	new_action.sa_handler = call_for_exit;
 	sigemptyset (&new_action.sa_mask);
@@ -84,15 +117,17 @@ int main(int argc, char* argv[])
 	safecall(sigaction, SIGQUIT, &new_action, NULL);
 	safecall(sigaction, SIGTERM, &new_action, NULL);
 	safecall(sigaction, SIGINT, &new_action, NULL);
-	*/
+
 
 	safecall(chdir, OJ_HOME);
 	safecall(unshare, CLONE_FS);
 
+	auto judgers = readConfig();
+
 	//CpuSetManager::getInstance(); //initialize
 
 	WServer wserver;
-	wserver.Run();
+	wserver.Run(std::move(judgers));
 	return 0;
 }
 

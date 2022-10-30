@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 4; tab-width: 4 -*-  */
 /*
- * w-server.h
+ * judge-task.h
  * Copyright (C) 2022 Massimo Dong <ms@maxmute.com>
  *
  * wzoj-judger2 is free software: you can redistribute it and/or modify it
@@ -17,19 +17,16 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _W_SERVER_H_
-#define _W_SERVER_H_
+#ifndef _JUDGE_TASK_H_
+#define _JUDGE_TASK_H_
 
 #include "common.h"
-#include "grpcpp/grpcpp.h"
-#include "wjudger.pb.h"
-#include "wjudger.grpc.pb.h"
-#include "judger.h"
 
-class WServer
+class JudgeTask
 {
 public:
-	void Run(std::unique_ptr<std::vector<Judger>>);
+	virtual int language() const = 0;
+	virtual std::string code() const = 0;
 
 protected:
 
@@ -37,5 +34,5 @@ private:
 
 };
 
-#endif // _W_SERVER_H_
+#endif // _JUDGE_TASK_H_
 

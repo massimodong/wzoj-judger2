@@ -18,21 +18,57 @@
  */
 
 #include "w-server.h"
+#include "judge-task.h"
 
 using namespace grpc;
+using namespace WJudger;
 
-class WJudgerImpl final : public WJudger::Service {
-	Status Judge(
-		ServerContext *context,
-		const JudgeArgs *args,
-		ServerWriter<JudgeReply> *writer) override {
+class GrpcTask final: public JudgeTask{
+	public:
+	GrpcTask(const JudgeArgs * args, ServerWriter<JudgeReply> *writer):args(args), writer(writer){
+	}
+
+	int language() const override{
+		return args->language();
+	}
+
+	std::string code() const override{
+		return args->code();
+	}
+
+	private:
+		const JudgeArgs *args;
+		ServerWriter<JudgeReply> *writer;
+};
+
+class WJudgerImpl final : public WJudger::WJudger::Service {
+	public:
+	void setJudgers(std::unique_ptr<std::vector<Judger>> _judgers){
+		judgers = std::move(_judgers);
+	}
+
+	private:
+	std::unique_ptr<std::vector<Judger>> judgers;
+
+	Status Judge(ServerContext *context, const JudgeArgs *args, ServerWriter<JudgeReply> *writer) override {
+		safecall(unshare, CLONE_FS);
+
+		for(Judger &judger: *judgers){
+			if(judger.token_match("123456")){ //TODO: add token in args
+				judger.judge(GrpcTask(args, writer));
+				return Status::OK;
+			}
+		}
+		const JudgeReply reply;//TODO: reply no match
+		writer->Write(reply);
 		return Status::OK;
 	}
 };
 
-void WServer::Run(){
+void WServer::Run(std::unique_ptr<std::vector<Judger>> judgers){
 	std::string address("0.0.0.0:9717");
 	WJudgerImpl impl;
+	impl.setJudgers(std::move(judgers));
 
 	ServerBuilder builder;
 
@@ -41,5 +77,6 @@ void WServer::Run(){
 
 	std::unique_ptr<Server> server(builder.BuildAndStart());
 
-	server->Wait();
+	//server->Wait();
+	oj_wait_shutdown();
 }

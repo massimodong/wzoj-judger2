@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 4; tab-width: 4 -*-  */
 /*
- * w-server.h
+ * sandbox.h
  * Copyright (C) 2022 Massimo Dong <ms@maxmute.com>
  *
  * wzoj-judger2 is free software: you can redistribute it and/or modify it
@@ -17,25 +17,30 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _W_SERVER_H_
-#define _W_SERVER_H_
+#ifndef _SANDBOX_H_
+#define _SANDBOX_H_
 
 #include "common.h"
-#include "grpcpp/grpcpp.h"
-#include "wjudger.pb.h"
-#include "wjudger.grpc.pb.h"
-#include "judger.h"
 
-class WServer
+class Sandbox
 {
 public:
-	void Run(std::unique_ptr<std::vector<Judger>>);
+	Sandbox(int);
+	~Sandbox();
 
+	void ready();
+	void clean();
+	int compile(int language, std::string code);
+	int open_file(const char *filename = NULL);
 protected:
 
 private:
+	std::string name;
 
+	std::vector<std::string> executable_files;
+	std::vector<std::pair<int, std::string>> normal_files;
+	int raw_compile(int language);
 };
 
-#endif // _W_SERVER_H_
+#endif // _SANDBOX_H_
 

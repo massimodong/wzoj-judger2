@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 4; tab-width: 4 -*-  */
 /*
- * w-server.h
+ * judger.h
  * Copyright (C) 2022 Massimo Dong <ms@maxmute.com>
  *
  * wzoj-judger2 is free software: you can redistribute it and/or modify it
@@ -17,25 +17,39 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _W_SERVER_H_
-#define _W_SERVER_H_
+#ifndef _JUDGER_H_
+#define _JUDGER_H_
 
+#include <libconfig.h++>
 #include "common.h"
-#include "grpcpp/grpcpp.h"
-#include "wjudger.pb.h"
-#include "wjudger.grpc.pb.h"
-#include "judger.h"
+#include "judge-task.h"
+#include "sandbox.h"
 
-class WServer
+class Judger
 {
 public:
-	void Run(std::unique_ptr<std::vector<Judger>>);
+	Judger(std::string name, libconfig::Setting &);
+	Judger(Judger &&) = default;
+	Judger &operator=(Judger &&) = default;
+	Judger (const Judger &) = delete;
+	Judger &operator =(const Judger &) = delete;
+	~Judger();
 
+	bool token_match(std::string);
+	void judge(const JudgeTask &);
 protected:
 
 private:
+	std::string name;
+	std::string token;
+	int sandbox_size;
+	std::queue<std::unique_ptr<Sandbox>> sandboxes;
 
+	std::unique_ptr<std::mutex> mutex;
+
+	std::unique_ptr<Sandbox> fetch_sandbox();
+	void return_sandbox(std::unique_ptr<Sandbox>);
 };
 
-#endif // _W_SERVER_H_
+#endif // _JUDGER_H_
 

@@ -25,52 +25,74 @@
 #include <grpcpp/impl/codegen/stub_options.h>
 #include <grpcpp/impl/codegen/sync_stream.h>
 
+namespace WJudger {
+
 class WJudger final {
  public:
   static constexpr char const* service_full_name() {
-    return "WJudger";
+    return "WJudger.WJudger";
   }
   class StubInterface {
    public:
     virtual ~StubInterface() {}
-    std::unique_ptr< ::grpc::ClientReaderInterface< ::JudgeReply>> Judge(::grpc::ClientContext* context, const ::JudgeArgs& request) {
-      return std::unique_ptr< ::grpc::ClientReaderInterface< ::JudgeReply>>(JudgeRaw(context, request));
+    std::unique_ptr< ::grpc::ClientReaderInterface< ::WJudger::JudgeReply>> Judge(::grpc::ClientContext* context, const ::WJudger::JudgeArgs& request) {
+      return std::unique_ptr< ::grpc::ClientReaderInterface< ::WJudger::JudgeReply>>(JudgeRaw(context, request));
     }
-    std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::JudgeReply>> AsyncJudge(::grpc::ClientContext* context, const ::JudgeArgs& request, ::grpc::CompletionQueue* cq, void* tag) {
-      return std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::JudgeReply>>(AsyncJudgeRaw(context, request, cq, tag));
+    std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::WJudger::JudgeReply>> AsyncJudge(::grpc::ClientContext* context, const ::WJudger::JudgeArgs& request, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::WJudger::JudgeReply>>(AsyncJudgeRaw(context, request, cq, tag));
     }
-    std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::JudgeReply>> PrepareAsyncJudge(::grpc::ClientContext* context, const ::JudgeArgs& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::JudgeReply>>(PrepareAsyncJudgeRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::WJudger::JudgeReply>> PrepareAsyncJudge(::grpc::ClientContext* context, const ::WJudger::JudgeArgs& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::WJudger::JudgeReply>>(PrepareAsyncJudgeRaw(context, request, cq));
+    }
+    virtual ::grpc::Status Simple(::grpc::ClientContext* context, const ::WJudger::SimpleArgs& request, ::WJudger::SimpleReply* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::WJudger::SimpleReply>> AsyncSimple(::grpc::ClientContext* context, const ::WJudger::SimpleArgs& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::WJudger::SimpleReply>>(AsyncSimpleRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::WJudger::SimpleReply>> PrepareAsyncSimple(::grpc::ClientContext* context, const ::WJudger::SimpleArgs& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::WJudger::SimpleReply>>(PrepareAsyncSimpleRaw(context, request, cq));
     }
     class async_interface {
      public:
       virtual ~async_interface() {}
-      virtual void Judge(::grpc::ClientContext* context, const ::JudgeArgs* request, ::grpc::ClientReadReactor< ::JudgeReply>* reactor) = 0;
+      virtual void Judge(::grpc::ClientContext* context, const ::WJudger::JudgeArgs* request, ::grpc::ClientReadReactor< ::WJudger::JudgeReply>* reactor) = 0;
+      virtual void Simple(::grpc::ClientContext* context, const ::WJudger::SimpleArgs* request, ::WJudger::SimpleReply* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void Simple(::grpc::ClientContext* context, const ::WJudger::SimpleArgs* request, ::WJudger::SimpleReply* response, ::grpc::ClientUnaryReactor* reactor) = 0;
     };
     typedef class async_interface experimental_async_interface;
     virtual class async_interface* async() { return nullptr; }
     class async_interface* experimental_async() { return async(); }
    private:
-    virtual ::grpc::ClientReaderInterface< ::JudgeReply>* JudgeRaw(::grpc::ClientContext* context, const ::JudgeArgs& request) = 0;
-    virtual ::grpc::ClientAsyncReaderInterface< ::JudgeReply>* AsyncJudgeRaw(::grpc::ClientContext* context, const ::JudgeArgs& request, ::grpc::CompletionQueue* cq, void* tag) = 0;
-    virtual ::grpc::ClientAsyncReaderInterface< ::JudgeReply>* PrepareAsyncJudgeRaw(::grpc::ClientContext* context, const ::JudgeArgs& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientReaderInterface< ::WJudger::JudgeReply>* JudgeRaw(::grpc::ClientContext* context, const ::WJudger::JudgeArgs& request) = 0;
+    virtual ::grpc::ClientAsyncReaderInterface< ::WJudger::JudgeReply>* AsyncJudgeRaw(::grpc::ClientContext* context, const ::WJudger::JudgeArgs& request, ::grpc::CompletionQueue* cq, void* tag) = 0;
+    virtual ::grpc::ClientAsyncReaderInterface< ::WJudger::JudgeReply>* PrepareAsyncJudgeRaw(::grpc::ClientContext* context, const ::WJudger::JudgeArgs& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::WJudger::SimpleReply>* AsyncSimpleRaw(::grpc::ClientContext* context, const ::WJudger::SimpleArgs& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::WJudger::SimpleReply>* PrepareAsyncSimpleRaw(::grpc::ClientContext* context, const ::WJudger::SimpleArgs& request, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub final : public StubInterface {
    public:
     Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
-    std::unique_ptr< ::grpc::ClientReader< ::JudgeReply>> Judge(::grpc::ClientContext* context, const ::JudgeArgs& request) {
-      return std::unique_ptr< ::grpc::ClientReader< ::JudgeReply>>(JudgeRaw(context, request));
+    std::unique_ptr< ::grpc::ClientReader< ::WJudger::JudgeReply>> Judge(::grpc::ClientContext* context, const ::WJudger::JudgeArgs& request) {
+      return std::unique_ptr< ::grpc::ClientReader< ::WJudger::JudgeReply>>(JudgeRaw(context, request));
     }
-    std::unique_ptr< ::grpc::ClientAsyncReader< ::JudgeReply>> AsyncJudge(::grpc::ClientContext* context, const ::JudgeArgs& request, ::grpc::CompletionQueue* cq, void* tag) {
-      return std::unique_ptr< ::grpc::ClientAsyncReader< ::JudgeReply>>(AsyncJudgeRaw(context, request, cq, tag));
+    std::unique_ptr< ::grpc::ClientAsyncReader< ::WJudger::JudgeReply>> AsyncJudge(::grpc::ClientContext* context, const ::WJudger::JudgeArgs& request, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncReader< ::WJudger::JudgeReply>>(AsyncJudgeRaw(context, request, cq, tag));
     }
-    std::unique_ptr< ::grpc::ClientAsyncReader< ::JudgeReply>> PrepareAsyncJudge(::grpc::ClientContext* context, const ::JudgeArgs& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncReader< ::JudgeReply>>(PrepareAsyncJudgeRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncReader< ::WJudger::JudgeReply>> PrepareAsyncJudge(::grpc::ClientContext* context, const ::WJudger::JudgeArgs& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncReader< ::WJudger::JudgeReply>>(PrepareAsyncJudgeRaw(context, request, cq));
+    }
+    ::grpc::Status Simple(::grpc::ClientContext* context, const ::WJudger::SimpleArgs& request, ::WJudger::SimpleReply* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::WJudger::SimpleReply>> AsyncSimple(::grpc::ClientContext* context, const ::WJudger::SimpleArgs& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::WJudger::SimpleReply>>(AsyncSimpleRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::WJudger::SimpleReply>> PrepareAsyncSimple(::grpc::ClientContext* context, const ::WJudger::SimpleArgs& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::WJudger::SimpleReply>>(PrepareAsyncSimpleRaw(context, request, cq));
     }
     class async final :
       public StubInterface::async_interface {
      public:
-      void Judge(::grpc::ClientContext* context, const ::JudgeArgs* request, ::grpc::ClientReadReactor< ::JudgeReply>* reactor) override;
+      void Judge(::grpc::ClientContext* context, const ::WJudger::JudgeArgs* request, ::grpc::ClientReadReactor< ::WJudger::JudgeReply>* reactor) override;
+      void Simple(::grpc::ClientContext* context, const ::WJudger::SimpleArgs* request, ::WJudger::SimpleReply* response, std::function<void(::grpc::Status)>) override;
+      void Simple(::grpc::ClientContext* context, const ::WJudger::SimpleArgs* request, ::WJudger::SimpleReply* response, ::grpc::ClientUnaryReactor* reactor) override;
      private:
       friend class Stub;
       explicit async(Stub* stub): stub_(stub) { }
@@ -82,10 +104,13 @@ class WJudger final {
    private:
     std::shared_ptr< ::grpc::ChannelInterface> channel_;
     class async async_stub_{this};
-    ::grpc::ClientReader< ::JudgeReply>* JudgeRaw(::grpc::ClientContext* context, const ::JudgeArgs& request) override;
-    ::grpc::ClientAsyncReader< ::JudgeReply>* AsyncJudgeRaw(::grpc::ClientContext* context, const ::JudgeArgs& request, ::grpc::CompletionQueue* cq, void* tag) override;
-    ::grpc::ClientAsyncReader< ::JudgeReply>* PrepareAsyncJudgeRaw(::grpc::ClientContext* context, const ::JudgeArgs& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientReader< ::WJudger::JudgeReply>* JudgeRaw(::grpc::ClientContext* context, const ::WJudger::JudgeArgs& request) override;
+    ::grpc::ClientAsyncReader< ::WJudger::JudgeReply>* AsyncJudgeRaw(::grpc::ClientContext* context, const ::WJudger::JudgeArgs& request, ::grpc::CompletionQueue* cq, void* tag) override;
+    ::grpc::ClientAsyncReader< ::WJudger::JudgeReply>* PrepareAsyncJudgeRaw(::grpc::ClientContext* context, const ::WJudger::JudgeArgs& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::WJudger::SimpleReply>* AsyncSimpleRaw(::grpc::ClientContext* context, const ::WJudger::SimpleArgs& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::WJudger::SimpleReply>* PrepareAsyncSimpleRaw(::grpc::ClientContext* context, const ::WJudger::SimpleArgs& request, ::grpc::CompletionQueue* cq) override;
     const ::grpc::internal::RpcMethod rpcmethod_Judge_;
+    const ::grpc::internal::RpcMethod rpcmethod_Simple_;
   };
   static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
 
@@ -93,7 +118,8 @@ class WJudger final {
    public:
     Service();
     virtual ~Service();
-    virtual ::grpc::Status Judge(::grpc::ServerContext* context, const ::JudgeArgs* request, ::grpc::ServerWriter< ::JudgeReply>* writer);
+    virtual ::grpc::Status Judge(::grpc::ServerContext* context, const ::WJudger::JudgeArgs* request, ::grpc::ServerWriter< ::WJudger::JudgeReply>* writer);
+    virtual ::grpc::Status Simple(::grpc::ServerContext* context, const ::WJudger::SimpleArgs* request, ::WJudger::SimpleReply* response);
   };
   template <class BaseClass>
   class WithAsyncMethod_Judge : public BaseClass {
@@ -107,15 +133,35 @@ class WJudger final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status Judge(::grpc::ServerContext* /*context*/, const ::JudgeArgs* /*request*/, ::grpc::ServerWriter< ::JudgeReply>* /*writer*/) override {
+    ::grpc::Status Judge(::grpc::ServerContext* /*context*/, const ::WJudger::JudgeArgs* /*request*/, ::grpc::ServerWriter< ::WJudger::JudgeReply>* /*writer*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestJudge(::grpc::ServerContext* context, ::JudgeArgs* request, ::grpc::ServerAsyncWriter< ::JudgeReply>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void RequestJudge(::grpc::ServerContext* context, ::WJudger::JudgeArgs* request, ::grpc::ServerAsyncWriter< ::WJudger::JudgeReply>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncServerStreaming(0, context, request, writer, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_Judge<Service > AsyncService;
+  template <class BaseClass>
+  class WithAsyncMethod_Simple : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_Simple() {
+      ::grpc::Service::MarkMethodAsync(1);
+    }
+    ~WithAsyncMethod_Simple() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Simple(::grpc::ServerContext* /*context*/, const ::WJudger::SimpleArgs* /*request*/, ::WJudger::SimpleReply* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestSimple(::grpc::ServerContext* context, ::WJudger::SimpleArgs* request, ::grpc::ServerAsyncResponseWriter< ::WJudger::SimpleReply>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  typedef WithAsyncMethod_Judge<WithAsyncMethod_Simple<Service > > AsyncService;
   template <class BaseClass>
   class WithCallbackMethod_Judge : public BaseClass {
    private:
@@ -123,22 +169,49 @@ class WJudger final {
    public:
     WithCallbackMethod_Judge() {
       ::grpc::Service::MarkMethodCallback(0,
-          new ::grpc::internal::CallbackServerStreamingHandler< ::JudgeArgs, ::JudgeReply>(
+          new ::grpc::internal::CallbackServerStreamingHandler< ::WJudger::JudgeArgs, ::WJudger::JudgeReply>(
             [this](
-                   ::grpc::CallbackServerContext* context, const ::JudgeArgs* request) { return this->Judge(context, request); }));
+                   ::grpc::CallbackServerContext* context, const ::WJudger::JudgeArgs* request) { return this->Judge(context, request); }));
     }
     ~WithCallbackMethod_Judge() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status Judge(::grpc::ServerContext* /*context*/, const ::JudgeArgs* /*request*/, ::grpc::ServerWriter< ::JudgeReply>* /*writer*/) override {
+    ::grpc::Status Judge(::grpc::ServerContext* /*context*/, const ::WJudger::JudgeArgs* /*request*/, ::grpc::ServerWriter< ::WJudger::JudgeReply>* /*writer*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    virtual ::grpc::ServerWriteReactor< ::JudgeReply>* Judge(
-      ::grpc::CallbackServerContext* /*context*/, const ::JudgeArgs* /*request*/)  { return nullptr; }
+    virtual ::grpc::ServerWriteReactor< ::WJudger::JudgeReply>* Judge(
+      ::grpc::CallbackServerContext* /*context*/, const ::WJudger::JudgeArgs* /*request*/)  { return nullptr; }
   };
-  typedef WithCallbackMethod_Judge<Service > CallbackService;
+  template <class BaseClass>
+  class WithCallbackMethod_Simple : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_Simple() {
+      ::grpc::Service::MarkMethodCallback(1,
+          new ::grpc::internal::CallbackUnaryHandler< ::WJudger::SimpleArgs, ::WJudger::SimpleReply>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::WJudger::SimpleArgs* request, ::WJudger::SimpleReply* response) { return this->Simple(context, request, response); }));}
+    void SetMessageAllocatorFor_Simple(
+        ::grpc::MessageAllocator< ::WJudger::SimpleArgs, ::WJudger::SimpleReply>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(1);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::WJudger::SimpleArgs, ::WJudger::SimpleReply>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_Simple() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Simple(::grpc::ServerContext* /*context*/, const ::WJudger::SimpleArgs* /*request*/, ::WJudger::SimpleReply* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* Simple(
+      ::grpc::CallbackServerContext* /*context*/, const ::WJudger::SimpleArgs* /*request*/, ::WJudger::SimpleReply* /*response*/)  { return nullptr; }
+  };
+  typedef WithCallbackMethod_Judge<WithCallbackMethod_Simple<Service > > CallbackService;
   typedef CallbackService ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod_Judge : public BaseClass {
@@ -152,7 +225,24 @@ class WJudger final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status Judge(::grpc::ServerContext* /*context*/, const ::JudgeArgs* /*request*/, ::grpc::ServerWriter< ::JudgeReply>* /*writer*/) override {
+    ::grpc::Status Judge(::grpc::ServerContext* /*context*/, const ::WJudger::JudgeArgs* /*request*/, ::grpc::ServerWriter< ::WJudger::JudgeReply>* /*writer*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_Simple : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_Simple() {
+      ::grpc::Service::MarkMethodGeneric(1);
+    }
+    ~WithGenericMethod_Simple() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Simple(::grpc::ServerContext* /*context*/, const ::WJudger::SimpleArgs* /*request*/, ::WJudger::SimpleReply* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -169,12 +259,32 @@ class WJudger final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status Judge(::grpc::ServerContext* /*context*/, const ::JudgeArgs* /*request*/, ::grpc::ServerWriter< ::JudgeReply>* /*writer*/) override {
+    ::grpc::Status Judge(::grpc::ServerContext* /*context*/, const ::WJudger::JudgeArgs* /*request*/, ::grpc::ServerWriter< ::WJudger::JudgeReply>* /*writer*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestJudge(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncWriter< ::grpc::ByteBuffer>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncServerStreaming(0, context, request, writer, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_Simple : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_Simple() {
+      ::grpc::Service::MarkMethodRaw(1);
+    }
+    ~WithRawMethod_Simple() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Simple(::grpc::ServerContext* /*context*/, const ::WJudger::SimpleArgs* /*request*/, ::WJudger::SimpleReply* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestSimple(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -192,14 +302,63 @@ class WJudger final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status Judge(::grpc::ServerContext* /*context*/, const ::JudgeArgs* /*request*/, ::grpc::ServerWriter< ::JudgeReply>* /*writer*/) override {
+    ::grpc::Status Judge(::grpc::ServerContext* /*context*/, const ::WJudger::JudgeArgs* /*request*/, ::grpc::ServerWriter< ::WJudger::JudgeReply>* /*writer*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     virtual ::grpc::ServerWriteReactor< ::grpc::ByteBuffer>* Judge(
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/)  { return nullptr; }
   };
-  typedef Service StreamedUnaryService;
+  template <class BaseClass>
+  class WithRawCallbackMethod_Simple : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_Simple() {
+      ::grpc::Service::MarkMethodRawCallback(1,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->Simple(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_Simple() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Simple(::grpc::ServerContext* /*context*/, const ::WJudger::SimpleArgs* /*request*/, ::WJudger::SimpleReply* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* Simple(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_Simple : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_Simple() {
+      ::grpc::Service::MarkMethodStreamed(1,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::WJudger::SimpleArgs, ::WJudger::SimpleReply>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::WJudger::SimpleArgs, ::WJudger::SimpleReply>* streamer) {
+                       return this->StreamedSimple(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_Simple() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status Simple(::grpc::ServerContext* /*context*/, const ::WJudger::SimpleArgs* /*request*/, ::WJudger::SimpleReply* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedSimple(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::WJudger::SimpleArgs,::WJudger::SimpleReply>* server_unary_streamer) = 0;
+  };
+  typedef WithStreamedUnaryMethod_Simple<Service > StreamedUnaryService;
   template <class BaseClass>
   class WithSplitStreamingMethod_Judge : public BaseClass {
    private:
@@ -208,10 +367,10 @@ class WJudger final {
     WithSplitStreamingMethod_Judge() {
       ::grpc::Service::MarkMethodStreamed(0,
         new ::grpc::internal::SplitServerStreamingHandler<
-          ::JudgeArgs, ::JudgeReply>(
+          ::WJudger::JudgeArgs, ::WJudger::JudgeReply>(
             [this](::grpc::ServerContext* context,
                    ::grpc::ServerSplitStreamer<
-                     ::JudgeArgs, ::JudgeReply>* streamer) {
+                     ::WJudger::JudgeArgs, ::WJudger::JudgeReply>* streamer) {
                        return this->StreamedJudge(context,
                          streamer);
                   }));
@@ -220,16 +379,18 @@ class WJudger final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status Judge(::grpc::ServerContext* /*context*/, const ::JudgeArgs* /*request*/, ::grpc::ServerWriter< ::JudgeReply>* /*writer*/) override {
+    ::grpc::Status Judge(::grpc::ServerContext* /*context*/, const ::WJudger::JudgeArgs* /*request*/, ::grpc::ServerWriter< ::WJudger::JudgeReply>* /*writer*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     // replace default version of method with split streamed
-    virtual ::grpc::Status StreamedJudge(::grpc::ServerContext* context, ::grpc::ServerSplitStreamer< ::JudgeArgs,::JudgeReply>* server_split_streamer) = 0;
+    virtual ::grpc::Status StreamedJudge(::grpc::ServerContext* context, ::grpc::ServerSplitStreamer< ::WJudger::JudgeArgs,::WJudger::JudgeReply>* server_split_streamer) = 0;
   };
   typedef WithSplitStreamingMethod_Judge<Service > SplitStreamedService;
-  typedef WithSplitStreamingMethod_Judge<Service > StreamedService;
+  typedef WithSplitStreamingMethod_Judge<WithStreamedUnaryMethod_Simple<Service > > StreamedService;
 };
+
+}  // namespace WJudger
 
 
 #endif  // GRPC_wjudger_2eproto__INCLUDED
