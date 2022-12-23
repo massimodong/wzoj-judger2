@@ -60,6 +60,8 @@ const int OJ_LANGUAGE_PYTHON = 4;
 const int OJ_PROBLEM_TYPE_INTERACT = 2;
 const int OJ_PROBLEM_TYPE_SUBMIT_SOLUTION = 3;
 
+const int OJ_SMALL_BUFFER_SIZE = 512;
+
 #define IDENTITY_MACRO(x) x
 #define MAKEARRAY(items) {items(IDENTITY_MACRO)}
 

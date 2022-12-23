@@ -21,6 +21,7 @@
 #include "syscall_whitelist.h"
 #include <filesystem>
 #include <sys/resource.h>
+#include <sys/mman.h>
 
 int syscall_wl[] = MAKEARRAY(SYSCALL_ALLOWED_ALL);
 
@@ -52,6 +53,7 @@ Sandbox::Sandbox(int id):name(std::to_string(id)){
 	safecall(mkdir, "compile", S_IRWXU);
 	safecall(chown, "compile", JUDGER_UID, JUDGER_UID);
 	safecall(mkdir, "run", S_IRWXU);
+	safecall(chown, "run", JUDGER_UID, JUDGER_UID);
 	BINDDIRS(BIND);
 	std::filesystem::copy_file(LIB_WJUDGER_SECCOMP_LOADER_PATH, "compile/libwjudger_seccomp_loader.a");
 	safecall(chdir, "..");
@@ -86,15 +88,18 @@ void Sandbox::clean(){
 	}
 	for(auto file: normal_files){
 		safecall(close, file.first);
-		safecall(unlink, ("run/" + file.second).c_str());
+		safecall(unlink, file.second.c_str());
+	}
+	for(auto fd: ram_files){
+		safecall(close, fd);
 	}
 	safecall(chdir, "..");
 }
 
-int Sandbox::compile(int language, std::string code){
+int Sandbox::compile(int language, std::string code, int fd_ce){
 	assert(language < 5);
 	writeFile(LANGUAGE_FILE_NAMES[language], code);
-	return raw_compile(language);
+	return raw_compile(language, fd_ce);
 }
 
 int Sandbox::open_file(const char *file_name){
@@ -109,6 +114,15 @@ int Sandbox::open_file(const char *file_name){
 
 	normal_files.emplace_back(std::make_pair(fd, file_name));
 
+	return fd;
+}
+
+int Sandbox::open_ram_file(){
+	int fd = memfd_create("wjudger", 0);
+	if(fd == -1){
+		LOG(FATAL)<<"failed to create ram file :"<<strerror(errno);
+	}
+	ram_files.push_back(fd);
 	return fd;
 }
 
@@ -135,7 +149,7 @@ static void setlimits(uint64_t time, uint64_t memory, uint64_t file_size){
 	safecall(setresuid, JUDGER_UID, JUDGER_UID, JUDGER_UID);
 }
 
-[[ noreturn ]] static void executeCompile(int language){
+[[ noreturn ]] static void executeCompile(int language, int fd_ce){
 	const char * CP_C[] = { "gcc", "Main.c", "-o", "Main", "-O2", "-fno-asm", "-Wall",
 			"-lm", "--static", "-std=c99", "-DONLINE_JUDGE", NULL };
 	const char * CP_X[] = { "g++", "-Wl,--whole-archive", "libwjudger_seccomp_loader.a", "-Wl,--no-whole-archive", // Load seccomp by a static library
@@ -154,9 +168,9 @@ static void setlimits(uint64_t time, uint64_t memory, uint64_t file_size){
 	
 	safecall(chdir, "./compile");
 	if(language == OJ_LANGUAGE_PASCAL){
-		freopen("ce.txt", "w", stdout);
+		dup2(fd_ce, 1);
 	}else{
-		freopen("ce.txt", "w", stderr);
+		dup2(fd_ce, 2);
 	}
 	setlimits(COMPILE_TIME, COMPILE_MEMORY, COMPILE_FILE_SIZE);
 	safecall(execvp, CP[language][0], CP[language]);
@@ -171,16 +185,17 @@ static pid_t fork_safe(){
 	return ret;
 }
 
-int Sandbox::raw_compile(int language){
+int Sandbox::raw_compile(int language, int fd_ce){
 	assert(language < 5);
 
 	pid_t pid = fork_safe();
 	if(pid == 0){
-		executeCompile(language);
+		executeCompile(language, fd_ce);
 	}else{
 		int status = 0;
 		safecall(waitpid, pid, &status, 0);
 		DLOG(INFO)<<"compile status: "<<status;
+		safecall(unlink, LANGUAGE_FILE_NAMES[language]);
 		if(status){
 			return -1;
 		}
@@ -191,8 +206,42 @@ int Sandbox::raw_compile(int language){
 	executable_files.emplace_back(exe_name);
 
 	std::filesystem::copy_file("compile/Main", ("run/" + exe_name).c_str());
-	safecall(unlink, LANGUAGE_FILE_NAMES[language]);
 	safecall(unlink, "compile/Main");
-	safecall(unlink, "compile/ce.txt");
 	return id;
+}
+
+[[ noreturn ]] static void spawnedProcess(const char *exe, std::vector<std::pair<int, int>> mappings){
+	const char * Main[] = { exe, NULL };
+	safecall(chdir, "./run");
+
+	for(auto p: mappings){
+		safecall(dup2, p.second, p.first);
+		safecall(close, p.second);
+	}
+
+	//TODO: seccomp
+	setlimits(COMPILE_TIME, COMPILE_MEMORY, COMPILE_FILE_SIZE); //TODO: different limits
+	safecall(execvp, Main[0], (char * const *)Main);
+	LOG(FATAL)<<"Should not reach here";
+}
+
+ExecuteData Sandbox::execute_program(int exe_id, std::vector<std::pair<int, int>> mappings){
+	ExecuteData data;
+	pid_t pid = fork_safe();
+	if(pid == 0){
+		spawnedProcess(("./" + executable_files[exe_id]).c_str(), mappings);
+		LOG(FATAL)<<"Should not reach here";
+	}
+
+	int status = 0;
+	struct rusage usage;
+	safecall(wait4, pid, &status, 0, &usage);
+	if(WIFEXITED(status) && (WEXITSTATUS(status) == 0)){
+		data.re = false;
+	}else{
+		data.re = true;
+	}
+	data.time_used = usage.ru_utime.tv_sec * (1000ll) + usage.ru_utime.tv_usec/1000;
+	data.memory_used = usage.ru_maxrss / (double)STD_MB;
+	return data;
 }

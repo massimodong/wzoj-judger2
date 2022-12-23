@@ -37,6 +37,7 @@ public:
 
 	bool token_match(std::string);
 	void judge(const JudgeTask &);
+	void simple(const SimpleTask &);
 protected:
 
 private:

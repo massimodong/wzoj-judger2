@@ -41,6 +41,46 @@ class GrpcTask final: public JudgeTask{
 		ServerWriter<JudgeReply> *writer;
 };
 
+class SimpleGrpcTask final: public SimpleTask{
+	public:
+	SimpleGrpcTask(const SimpleArgs *args, SimpleReply *reply):args(args), reply(reply){
+	}
+	int language() const override{
+		return args->language();
+	}
+	std::string code() const override{
+		return args->code();
+	}
+	std::string input() const override{
+		return args->input();
+	}
+
+	void set_compileerror(std::string err) const override{
+		reply->set_compileerror(true);
+		reply->set_compileerrormessage(err);
+	}
+
+	void set_runtimeerror(std::string err) const override{
+		reply->set_runtimeerror(true);
+		reply->set_runtimeerrormessage(err);
+	}
+
+	void set_timeused(long long t) const override{
+		reply->set_timeused(t);
+	}
+
+	void set_memoryused(double m) const override{
+		reply->set_memoryused(m);
+	}
+
+	void set_output(std::string o) const override{
+		reply->set_output(o);
+	}
+	private:
+		const SimpleArgs *args;
+		SimpleReply *reply;
+};
+
 class WJudgerImpl final : public WJudger::WJudger::Service {
 	public:
 	void setJudgers(std::unique_ptr<std::vector<Judger>> _judgers){
@@ -63,10 +103,21 @@ class WJudgerImpl final : public WJudger::WJudger::Service {
 		writer->Write(reply);
 		return Status::OK;
 	}
+
+	Status Simple(ServerContext *context, const SimpleArgs *args, SimpleReply *reply) override{
+		safecall(unshare, CLONE_FS);
+		for(Judger &judger: *judgers){
+			if(judger.token_match(args->token())){
+				judger.simple(SimpleGrpcTask(args, reply));
+				return Status::OK;
+			}
+		}
+		return Status(StatusCode::UNAUTHENTICATED, "Invalid token");
+	}
 };
 
 void WServer::Run(std::unique_ptr<std::vector<Judger>> judgers){
-	std::string address("0.0.0.0:9717");
+	std::string address("[::]:9717");
 	WJudgerImpl impl;
 	impl.setJudgers(std::move(judgers));
 

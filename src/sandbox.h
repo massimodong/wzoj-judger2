@@ -22,6 +22,12 @@
 
 #include "common.h"
 
+struct ExecuteData{
+	bool re;
+	long long time_used;
+	double memory_used;
+};
+
 class Sandbox
 {
 public:
@@ -30,8 +36,10 @@ public:
 
 	void ready();
 	void clean();
-	int compile(int language, std::string code);
+	int compile(int language, std::string code, int);
 	int open_file(const char *filename = NULL);
+	int open_ram_file();
+	ExecuteData execute_program(int, std::vector<std::pair<int, int>>);
 protected:
 
 private:
@@ -39,7 +47,8 @@ private:
 
 	std::vector<std::string> executable_files;
 	std::vector<std::pair<int, std::string>> normal_files;
-	int raw_compile(int language);
+	std::vector<int> ram_files;
+	int raw_compile(int language, int fd_ce);
 };
 
 #endif // _SANDBOX_H_

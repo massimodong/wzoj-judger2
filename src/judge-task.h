@@ -34,5 +34,19 @@ private:
 
 };
 
+class SimpleTask{
+	public:
+		virtual int language() const = 0;
+		virtual std::string code() const = 0;
+		virtual std::string input() const = 0;
+
+		virtual void set_compileerror(std::string) const = 0;
+		virtual void set_runtimeerror(std::string) const = 0;
+		virtual void set_timeused(long long) const = 0;
+		virtual void set_memoryused(double) const = 0;
+		virtual void set_output(std::string) const = 0;
+	private:
+};
+
 #endif // _JUDGE_TASK_H_
 
