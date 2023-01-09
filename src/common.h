@@ -91,6 +91,7 @@ static void writeFile(const std::string &fileName, const std::string &str)
 }
 
 static void dpause(){
+	return;
 	int t;
 	std::cout<<"pause"<<std::endl;
 	std::cin>>t;

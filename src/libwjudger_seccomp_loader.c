@@ -21,7 +21,7 @@
 #define ArchField offsetof(struct seccomp_data, arch)
 
 #define Deny(syscall) \
-    BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, syscall, 0, 1), \
+    BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, __NR_##syscall, 0, 1), \
     BPF_STMT(BPF_RET+BPF_K, SECCOMP_RET_TRAP)
 
 static struct sock_filter filter[] = {

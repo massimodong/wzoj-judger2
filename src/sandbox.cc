@@ -22,12 +22,15 @@
 #include <filesystem>
 #include <sys/resource.h>
 #include <sys/mman.h>
-
-int syscall_wl[] = MAKEARRAY(SYSCALL_ALLOWED_ALL);
+#include <seccomp.h>
 
 const static uint64_t COMPILE_TIME = 60;
 const static uint64_t COMPILE_FILE_SIZE = 10 * STD_MB;
 const static uint64_t COMPILE_MEMORY = 256 * STD_MB;
+
+const static uint64_t SIMPLE_TIME = 1;
+const static uint64_t SIMPLE_MEMORY = 256 * STD_MB;
+
 const static uint64_t RUN_FILE_SIZE = 2048 * STD_MB;
 
 #define LIB_WJUDGER_SECCOMP_LOADER_PATH "/home/massimo/W/proj/wzoj-judger2/Debug/src/libwjudger_seccomp_loader.a"
@@ -86,13 +89,19 @@ void Sandbox::clean(){
 	for(auto exe_name: executable_files){
 		safecall(unlink, ("run/" + exe_name).c_str());
 	}
+	executable_files.clear();
+
 	for(auto file: normal_files){
 		safecall(close, file.first);
 		safecall(unlink, file.second.c_str());
 	}
+	normal_files.clear();
+
 	for(auto fd: ram_files){
 		safecall(close, fd);
 	}
+	ram_files.clear();
+
 	safecall(chdir, "..");
 }
 
@@ -141,6 +150,8 @@ static void setlimits(uint64_t time, uint64_t memory, uint64_t file_size){
 	if(ret){
 		LOG(FATAL)<<"Failed setting limits";
 	}
+
+	//safecall(alarm, time); //TODO: enable alarm
 
 	safecall(chroot, "./");
 
@@ -210,6 +221,18 @@ int Sandbox::raw_compile(int language, int fd_ce){
 	return id;
 }
 
+#define WJUDGER_SYSCALL_ALLOW(s) seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(s), 0)
+static void apply_seccomp(){
+	scmp_filter_ctx ctx = seccomp_init(SCMP_ACT_TRAP);
+	if(ctx == NULL) LOG(FATAL)<<"ceccomp_init failed";
+
+	SYSCALL_ALLOWED_ALL(WJUDGER_SYSCALL_ALLOW);
+
+	int load_res = seccomp_load(ctx);
+	if(load_res) LOG(FATAL)<<"load seccomp contex failed";
+	seccomp_release(ctx);
+}
+
 [[ noreturn ]] static void spawnedProcess(const char *exe, std::vector<std::pair<int, int>> mappings){
 	const char * Main[] = { exe, NULL };
 	safecall(chdir, "./run");
@@ -219,8 +242,8 @@ int Sandbox::raw_compile(int language, int fd_ce){
 		safecall(close, p.second);
 	}
 
-	//TODO: seccomp
-	setlimits(COMPILE_TIME, COMPILE_MEMORY, COMPILE_FILE_SIZE); //TODO: different limits
+	setlimits(SIMPLE_TIME, SIMPLE_MEMORY, RUN_FILE_SIZE);
+	apply_seccomp();
 	safecall(execvp, Main[0], (char * const *)Main);
 	LOG(FATAL)<<"Should not reach here";
 }

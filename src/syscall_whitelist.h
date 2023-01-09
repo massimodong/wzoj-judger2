@@ -4,19 +4,33 @@
 #include <sys/syscall.h>
 
 #define SYSCALL_ALLOWED(ACTION)\
-	ACTION(SYS_exit_group),\
-	ACTION(SYS_brk),\
-	ACTION(SYS_mmap),\
-	ACTION(SYS_munmap),\
-	ACTION(SYS_write),\
-	ACTION(SYS_read),\
-	ACTION(SYS_fstat),\
-	ACTION(SYS_newfstatat)
+	ACTION(exit_group),\
+	ACTION(brk),\
+	ACTION(mmap),\
+	ACTION(munmap),\
+	ACTION(write),\
+	ACTION(read),\
+	ACTION(fstat),\
+	ACTION(lseek),\
+	ACTION(newfstatat)
 
 #define SYSCALL_ALLOWED_EXTENDED(ACTION)\
-	ACTION(SYS_execve),\
-	ACTION(SYS_prctl),\
-	ACTION(SYS_rt_sigaction)
+	ACTION(execve),\
+	ACTION(arch_prctl),\
+	ACTION(prctl),\
+	ACTION(rt_sigaction),\
+	ACTION(readlink),\
+	ACTION(mprotect),\
+	ACTION(arch_prctl),\
+	ACTION(uname),\
+	ACTION(ioctl),\
+	ACTION(getrlimit),\
+	ACTION(setrlimit),\
+	ACTION(set_tid_address),\
+	ACTION(set_robust_list),\
+	ACTION(rseq),\
+	ACTION(prlimit64),\
+	ACTION(getrandom)
 
 #define SYSCALL_ALLOWED_ALL(ACTION)\
 	SYSCALL_ALLOWED(ACTION),\
