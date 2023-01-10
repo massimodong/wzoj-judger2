@@ -138,12 +138,12 @@ void Judger::simple(const SimpleTask &task){
 			mappings.push_back(std::make_pair(1, fd_out));
 			mappings.push_back(std::make_pair(2, fd_err));
 			auto data = sandbox->execute_program(exe_id, mappings);
-			LOG(INFO)<<"RE: "<<data.re;
+			LOG(INFO)<<"RE: "<<data.re();
 			LOG(INFO)<<"time: "<<data.time_used;
 			LOG(INFO)<<"memory: "<<data.memory_used;
 			dpause();
 
-			if(data.re) task.set_runtimeerror(getFdContent(fd_err));
+			if(data.re()) task.set_runtimeerror(getFdContent(fd_err));
 			task.set_timeused(data.time_used);
 			task.set_memoryused(data.memory_used);
 			task.set_output(getFdContent(fd_out));

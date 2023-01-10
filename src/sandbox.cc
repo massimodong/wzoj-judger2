@@ -147,6 +147,9 @@ static void setlimits(uint64_t time, uint64_t memory, uint64_t file_size){
 	LIM.rlim_max = LIM.rlim_cur = file_size;
 	ret |= setrlimit(RLIMIT_FSIZE, &LIM);
 
+	LIM.rlim_max = LIM.rlim_cur = RLIM_INFINITY;
+	ret |= setrlimit(RLIMIT_STACK, &LIM);
+
 	if(ret){
 		LOG(FATAL)<<"Failed setting limits";
 	}
@@ -226,7 +229,7 @@ static void apply_seccomp(){
 	scmp_filter_ctx ctx = seccomp_init(SCMP_ACT_TRAP);
 	if(ctx == NULL) LOG(FATAL)<<"ceccomp_init failed";
 
-	SYSCALL_ALLOWED_ALL(WJUDGER_SYSCALL_ALLOW);
+	SYSCALL_ALLOWED_ALL(WJUDGER_SYSCALL_ALLOW); //TODO: check return value of seccomp_rule_add
 
 	int load_res = seccomp_load(ctx);
 	if(load_res) LOG(FATAL)<<"load seccomp contex failed";
@@ -259,11 +262,11 @@ ExecuteData Sandbox::execute_program(int exe_id, std::vector<std::pair<int, int>
 	int status = 0;
 	struct rusage usage;
 	safecall(wait4, pid, &status, 0, &usage);
-	if(WIFEXITED(status) && (WEXITSTATUS(status) == 0)){
-		data.re = false;
-	}else{
-		data.re = true;
-	}
+
+	data.ifexited = WIFEXITED(status);
+	data.ifsignaled = WIFSIGNALED(status);
+	if(data.ifexited) data.status = WEXITSTATUS(status);
+	if(data.ifsignaled) data.signal = WTERMSIG(status);
 	data.time_used = usage.ru_utime.tv_sec * (1000ll) + usage.ru_utime.tv_usec/1000;
 	data.memory_used = usage.ru_maxrss / (double)STD_MB;
 	return data;

@@ -22,10 +22,18 @@
 
 #include "common.h"
 
-struct ExecuteData{
-	bool re;
+class ExecuteData{
+	public:
+	bool ifexited;
+	bool ifsignaled;
+	int status;
+	int signal;
 	long long time_used;
 	double memory_used;
+	bool re() const{
+		if(ifexited && status == 0) return false;
+		else return true;
+	};
 };
 
 class Sandbox
