@@ -29,7 +29,7 @@ const static uint64_t COMPILE_FILE_SIZE = 10 * STD_MB;
 const static uint64_t COMPILE_MEMORY = 256 * STD_MB;
 
 const static uint64_t SIMPLE_TIME = 1;
-const static uint64_t SIMPLE_MEMORY = 256 * STD_MB;
+const static uint64_t SIMPLE_MEMORY = 1024 * STD_MB;
 
 const static uint64_t RUN_FILE_SIZE = 2048 * STD_MB;
 
@@ -268,6 +268,6 @@ ExecuteData Sandbox::execute_program(int exe_id, std::vector<std::pair<int, int>
 	if(data.ifexited) data.status = WEXITSTATUS(status);
 	if(data.ifsignaled) data.signal = WTERMSIG(status);
 	data.time_used = usage.ru_utime.tv_sec * (1000ll) + usage.ru_utime.tv_usec/1000;
-	data.memory_used = usage.ru_maxrss / (double)STD_MB;
+	data.memory_used = usage.ru_maxrss / (double)1024;
 	return data;
 }
