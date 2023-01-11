@@ -26,6 +26,7 @@ PROTOBUF_CONSTEXPR SimpleArgs::SimpleArgs(
     /*decltype(_impl_.token_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.code_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.input_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.judgerid_)*/0u
   , /*decltype(_impl_.language_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct SimpleArgsDefaultTypeInternal {
@@ -42,10 +43,11 @@ PROTOBUF_CONSTEXPR SimpleReply::SimpleReply(
     /*decltype(_impl_.compileerrormessage_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.runtimeerrormessage_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.output_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.status_)*/0
   , /*decltype(_impl_.compileerror_)*/false
-  , /*decltype(_impl_.runtimeerror_)*/0u
   , /*decltype(_impl_.timeused_)*/uint64_t{0u}
-  , /*decltype(_impl_.memoryused_)*/0
+  , /*decltype(_impl_.memoryused_)*/uint64_t{0u}
+  , /*decltype(_impl_.runtimeerror_)*/0u
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct SimpleReplyDefaultTypeInternal {
   PROTOBUF_CONSTEXPR SimpleReplyDefaultTypeInternal()
@@ -122,7 +124,7 @@ struct ExecuteResultDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ExecuteResultDefaultTypeInternal _ExecuteResult_default_instance_;
 }  // namespace WJudger
 static ::_pb::Metadata file_level_metadata_wjudger_2eproto[6];
-static const ::_pb::EnumDescriptor* file_level_enum_descriptors_wjudger_2eproto[2];
+static const ::_pb::EnumDescriptor* file_level_enum_descriptors_wjudger_2eproto[3];
 static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_wjudger_2eproto = nullptr;
 
 const uint32_t TableStruct_wjudger_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
@@ -132,6 +134,7 @@ const uint32_t TableStruct_wjudger_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::WJudger::SimpleArgs, _impl_.judgerid_),
   PROTOBUF_FIELD_OFFSET(::WJudger::SimpleArgs, _impl_.token_),
   PROTOBUF_FIELD_OFFSET(::WJudger::SimpleArgs, _impl_.code_),
   PROTOBUF_FIELD_OFFSET(::WJudger::SimpleArgs, _impl_.language_),
@@ -142,6 +145,7 @@ const uint32_t TableStruct_wjudger_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::WJudger::SimpleReply, _impl_.status_),
   PROTOBUF_FIELD_OFFSET(::WJudger::SimpleReply, _impl_.compileerror_),
   PROTOBUF_FIELD_OFFSET(::WJudger::SimpleReply, _impl_.runtimeerror_),
   PROTOBUF_FIELD_OFFSET(::WJudger::SimpleReply, _impl_.compileerrormessage_),
@@ -192,11 +196,11 @@ const uint32_t TableStruct_wjudger_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::WJudger::SimpleArgs)},
-  { 10, -1, -1, sizeof(::WJudger::SimpleReply)},
-  { 23, -1, -1, sizeof(::WJudger::JudgeArgs)},
-  { 34, -1, -1, sizeof(::WJudger::JudgeReply)},
-  { 43, -1, -1, sizeof(::WJudger::CompileResult)},
-  { 51, -1, -1, sizeof(::WJudger::ExecuteResult)},
+  { 11, -1, -1, sizeof(::WJudger::SimpleReply)},
+  { 25, -1, -1, sizeof(::WJudger::JudgeArgs)},
+  { 36, -1, -1, sizeof(::WJudger::JudgeReply)},
+  { 45, -1, -1, sizeof(::WJudger::CompileResult)},
+  { 53, -1, -1, sizeof(::WJudger::ExecuteResult)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -209,35 +213,38 @@ static const ::_pb::Message* const file_default_instances[] = {
 };
 
 const char descriptor_table_protodef_wjudger_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\rwjudger.proto\022\007WJudger\"]\n\nSimpleArgs\022\r"
-  "\n\005token\030\001 \001(\t\022\014\n\004code\030\002 \001(\t\022#\n\010language\030"
-  "\003 \001(\0162\021.WJudger.Language\022\r\n\005input\030\004 \001(\t\""
-  "\251\001\n\013SimpleReply\022\024\n\014compileError\030\001 \001(\010\022\024\n"
-  "\014runtimeError\030\002 \001(\r\022\033\n\023compileErrorMessa"
-  "ge\030\003 \001(\t\022\033\n\023runtimeErrorMessage\030\004 \001(\t\022\020\n"
-  "\010timeused\030\005 \001(\004\022\022\n\nmemoryused\030\006 \001(\001\022\016\n\006o"
-  "utput\030\007 \001(\t\"v\n\tJudgeArgs\022\014\n\004code\030\001 \001(\t\022#"
-  "\n\010language\030\002 \001(\0162\021.WJudger.Language\022\021\n\tt"
-  "imelimit\030\003 \001(\004\022\023\n\013memorylimit\030\004 \001(\001\022\016\n\006d"
-  "ataId\030\005 \001(\r\"\306\001\n\nJudgeReply\0222\n\nresultType"
-  "\030\001 \001(\0162\036.WJudger.JudgeReply.ResultType\022-"
-  "\n\rcompileResult\030\002 \001(\0132\026.WJudger.CompileR"
-  "esult\022-\n\rexecuteResult\030\003 \001(\0132\026.WJudger.E"
-  "xecuteResult\"&\n\nResultType\022\013\n\007COMPILE\020\000\022"
-  "\013\n\007EXECUTE\020\001\"7\n\rCompileResult\022\023\n\013compile"
-  "Eror\030\001 \001(\010\022\021\n\ttestcases\030\002 \003(\t\"t\n\rExecute"
-  "Result\022\020\n\010testcase\030\001 \001(\t\022\020\n\010timeused\030\002 \001"
-  "(\004\022\022\n\nmemoryused\030\003 \001(\001\022\r\n\005score\030\004 \001(\r\022\017\n"
-  "\007verdict\030\005 \001(\t\022\013\n\003msg\030\006 \001(\t*<\n\010Language\022"
-  "\005\n\001C\020\000\022\007\n\003CPP\020\001\022\n\n\006PASCAL\020\002\022\010\n\004JAVA\020\003\022\n\n"
-  "\006PYTHON\020\0042v\n\007WJudger\0224\n\005Judge\022\022.WJudger."
-  "JudgeArgs\032\023.WJudger.JudgeReply\"\0000\001\0225\n\006Si"
-  "mple\022\023.WJudger.SimpleArgs\032\024.WJudger.Simp"
-  "leReply\"\000b\006proto3"
+  "\n\rwjudger.proto\022\007WJudger\"o\n\nSimpleArgs\022\020"
+  "\n\010judgerid\030\001 \001(\r\022\r\n\005token\030\002 \001(\t\022\014\n\004code\030"
+  "\003 \001(\t\022#\n\010language\030\004 \001(\0162\021.WJudger.Langua"
+  "ge\022\r\n\005input\030\005 \001(\t\"\317\001\n\013SimpleReply\022$\n\006sta"
+  "tus\030\001 \001(\0162\024.WJudger.JudgeStatus\022\024\n\014compi"
+  "leError\030\002 \001(\010\022\024\n\014runtimeError\030\003 \001(\r\022\033\n\023c"
+  "ompileErrorMessage\030\004 \001(\t\022\033\n\023runtimeError"
+  "Message\030\005 \001(\t\022\020\n\010timeused\030\006 \001(\004\022\022\n\nmemor"
+  "yused\030\007 \001(\004\022\016\n\006output\030\010 \001(\t\"v\n\tJudgeArgs"
+  "\022\014\n\004code\030\001 \001(\t\022#\n\010language\030\002 \001(\0162\021.WJudg"
+  "er.Language\022\021\n\ttimelimit\030\003 \001(\004\022\023\n\013memory"
+  "limit\030\004 \001(\001\022\016\n\006dataId\030\005 \001(\r\"\306\001\n\nJudgeRep"
+  "ly\0222\n\nresultType\030\001 \001(\0162\036.WJudger.JudgeRe"
+  "ply.ResultType\022-\n\rcompileResult\030\002 \001(\0132\026."
+  "WJudger.CompileResult\022-\n\rexecuteResult\030\003"
+  " \001(\0132\026.WJudger.ExecuteResult\"&\n\nResultTy"
+  "pe\022\013\n\007COMPILE\020\000\022\013\n\007EXECUTE\020\001\"7\n\rCompileR"
+  "esult\022\023\n\013compileEror\030\001 \001(\010\022\021\n\ttestcases\030"
+  "\002 \003(\t\"t\n\rExecuteResult\022\020\n\010testcase\030\001 \001(\t"
+  "\022\020\n\010timeused\030\002 \001(\004\022\022\n\nmemoryused\030\003 \001(\001\022\r"
+  "\n\005score\030\004 \001(\r\022\017\n\007verdict\030\005 \001(\t\022\013\n\003msg\030\006 "
+  "\001(\t*4\n\013JudgeStatus\022\006\n\002OK\020\000\022\023\n\017UNAUTHENTI"
+  "CATED\020\001\022\010\n\004BUSY\020\002*<\n\010Language\022\005\n\001C\020\000\022\007\n\003"
+  "CPP\020\001\022\n\n\006PASCAL\020\002\022\010\n\004JAVA\020\003\022\n\n\006PYTHON\020\0042"
+  "v\n\007WJudger\0224\n\005Judge\022\022.WJudger.JudgeArgs\032"
+  "\023.WJudger.JudgeReply\"\0000\001\0225\n\006Simple\022\023.WJu"
+  "dger.SimpleArgs\032\024.WJudger.SimpleReply\"\000b"
+  "\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_wjudger_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_wjudger_2eproto = {
-    false, false, 977, descriptor_table_protodef_wjudger_2eproto,
+    false, false, 1087, descriptor_table_protodef_wjudger_2eproto,
     "wjudger.proto",
     &descriptor_table_wjudger_2eproto_once, nullptr, 0, 6,
     schemas, file_default_instances, TableStruct_wjudger_2eproto::offsets,
@@ -272,9 +279,24 @@ constexpr JudgeReply_ResultType JudgeReply::ResultType_MIN;
 constexpr JudgeReply_ResultType JudgeReply::ResultType_MAX;
 constexpr int JudgeReply::ResultType_ARRAYSIZE;
 #endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* Language_descriptor() {
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* JudgeStatus_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_wjudger_2eproto);
   return file_level_enum_descriptors_wjudger_2eproto[1];
+}
+bool JudgeStatus_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
+      return true;
+    default:
+      return false;
+  }
+}
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* Language_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_wjudger_2eproto);
+  return file_level_enum_descriptors_wjudger_2eproto[2];
 }
 bool Language_IsValid(int value) {
   switch (value) {
@@ -309,6 +331,7 @@ SimpleArgs::SimpleArgs(const SimpleArgs& from)
       decltype(_impl_.token_){}
     , decltype(_impl_.code_){}
     , decltype(_impl_.input_){}
+    , decltype(_impl_.judgerid_){}
     , decltype(_impl_.language_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
@@ -337,7 +360,9 @@ SimpleArgs::SimpleArgs(const SimpleArgs& from)
     _this->_impl_.input_.Set(from._internal_input(), 
       _this->GetArenaForAllocation());
   }
-  _this->_impl_.language_ = from._impl_.language_;
+  ::memcpy(&_impl_.judgerid_, &from._impl_.judgerid_,
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.language_) -
+    reinterpret_cast<char*>(&_impl_.judgerid_)) + sizeof(_impl_.language_));
   // @@protoc_insertion_point(copy_constructor:WJudger.SimpleArgs)
 }
 
@@ -349,6 +374,7 @@ inline void SimpleArgs::SharedCtor(
       decltype(_impl_.token_){}
     , decltype(_impl_.code_){}
     , decltype(_impl_.input_){}
+    , decltype(_impl_.judgerid_){0u}
     , decltype(_impl_.language_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
@@ -395,7 +421,9 @@ void SimpleArgs::Clear() {
   _impl_.token_.ClearToEmpty();
   _impl_.code_.ClearToEmpty();
   _impl_.input_.ClearToEmpty();
-  _impl_.language_ = 0;
+  ::memset(&_impl_.judgerid_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&_impl_.language_) -
+      reinterpret_cast<char*>(&_impl_.judgerid_)) + sizeof(_impl_.language_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -405,9 +433,17 @@ const char* SimpleArgs::_InternalParse(const char* ptr, ::_pbi::ParseContext* ct
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // string token = 1;
+      // uint32 judgerid = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _impl_.judgerid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // string token = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
           auto str = _internal_mutable_token();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
@@ -415,9 +451,9 @@ const char* SimpleArgs::_InternalParse(const char* ptr, ::_pbi::ParseContext* ct
         } else
           goto handle_unusual;
         continue;
-      // string code = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+      // string code = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
           auto str = _internal_mutable_code();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
@@ -425,18 +461,18 @@ const char* SimpleArgs::_InternalParse(const char* ptr, ::_pbi::ParseContext* ct
         } else
           goto handle_unusual;
         continue;
-      // .WJudger.Language language = 3;
-      case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
+      // .WJudger.Language language = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 32)) {
           uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
           _internal_set_language(static_cast<::WJudger::Language>(val));
         } else
           goto handle_unusual;
         continue;
-      // string input = 4;
-      case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
+      // string input = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 42)) {
           auto str = _internal_mutable_input();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
@@ -473,41 +509,47 @@ uint8_t* SimpleArgs::_InternalSerialize(
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string token = 1;
+  // uint32 judgerid = 1;
+  if (this->_internal_judgerid() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt32ToArray(1, this->_internal_judgerid(), target);
+  }
+
+  // string token = 2;
   if (!this->_internal_token().empty()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_token().data(), static_cast<int>(this->_internal_token().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
       "WJudger.SimpleArgs.token");
     target = stream->WriteStringMaybeAliased(
-        1, this->_internal_token(), target);
+        2, this->_internal_token(), target);
   }
 
-  // string code = 2;
+  // string code = 3;
   if (!this->_internal_code().empty()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_code().data(), static_cast<int>(this->_internal_code().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
       "WJudger.SimpleArgs.code");
     target = stream->WriteStringMaybeAliased(
-        2, this->_internal_code(), target);
+        3, this->_internal_code(), target);
   }
 
-  // .WJudger.Language language = 3;
+  // .WJudger.Language language = 4;
   if (this->_internal_language() != 0) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteEnumToArray(
-      3, this->_internal_language(), target);
+      4, this->_internal_language(), target);
   }
 
-  // string input = 4;
+  // string input = 5;
   if (!this->_internal_input().empty()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_input().data(), static_cast<int>(this->_internal_input().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
       "WJudger.SimpleArgs.input");
     target = stream->WriteStringMaybeAliased(
-        4, this->_internal_input(), target);
+        5, this->_internal_input(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -526,28 +568,33 @@ size_t SimpleArgs::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string token = 1;
+  // string token = 2;
   if (!this->_internal_token().empty()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
         this->_internal_token());
   }
 
-  // string code = 2;
+  // string code = 3;
   if (!this->_internal_code().empty()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
         this->_internal_code());
   }
 
-  // string input = 4;
+  // string input = 5;
   if (!this->_internal_input().empty()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
         this->_internal_input());
   }
 
-  // .WJudger.Language language = 3;
+  // uint32 judgerid = 1;
+  if (this->_internal_judgerid() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_judgerid());
+  }
+
+  // .WJudger.Language language = 4;
   if (this->_internal_language() != 0) {
     total_size += 1 +
       ::_pbi::WireFormatLite::EnumSize(this->_internal_language());
@@ -579,6 +626,9 @@ void SimpleArgs::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PRO
   }
   if (!from._internal_input().empty()) {
     _this->_internal_set_input(from._internal_input());
+  }
+  if (from._internal_judgerid() != 0) {
+    _this->_internal_set_judgerid(from._internal_judgerid());
   }
   if (from._internal_language() != 0) {
     _this->_internal_set_language(from._internal_language());
@@ -614,7 +664,12 @@ void SimpleArgs::InternalSwap(SimpleArgs* other) {
       &_impl_.input_, lhs_arena,
       &other->_impl_.input_, rhs_arena
   );
-  swap(_impl_.language_, other->_impl_.language_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(SimpleArgs, _impl_.language_)
+      + sizeof(SimpleArgs::_impl_.language_)
+      - PROTOBUF_FIELD_OFFSET(SimpleArgs, _impl_.judgerid_)>(
+          reinterpret_cast<char*>(&_impl_.judgerid_),
+          reinterpret_cast<char*>(&other->_impl_.judgerid_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata SimpleArgs::GetMetadata() const {
@@ -642,10 +697,11 @@ SimpleReply::SimpleReply(const SimpleReply& from)
       decltype(_impl_.compileerrormessage_){}
     , decltype(_impl_.runtimeerrormessage_){}
     , decltype(_impl_.output_){}
+    , decltype(_impl_.status_){}
     , decltype(_impl_.compileerror_){}
-    , decltype(_impl_.runtimeerror_){}
     , decltype(_impl_.timeused_){}
     , decltype(_impl_.memoryused_){}
+    , decltype(_impl_.runtimeerror_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -673,9 +729,9 @@ SimpleReply::SimpleReply(const SimpleReply& from)
     _this->_impl_.output_.Set(from._internal_output(), 
       _this->GetArenaForAllocation());
   }
-  ::memcpy(&_impl_.compileerror_, &from._impl_.compileerror_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.memoryused_) -
-    reinterpret_cast<char*>(&_impl_.compileerror_)) + sizeof(_impl_.memoryused_));
+  ::memcpy(&_impl_.status_, &from._impl_.status_,
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.runtimeerror_) -
+    reinterpret_cast<char*>(&_impl_.status_)) + sizeof(_impl_.runtimeerror_));
   // @@protoc_insertion_point(copy_constructor:WJudger.SimpleReply)
 }
 
@@ -687,10 +743,11 @@ inline void SimpleReply::SharedCtor(
       decltype(_impl_.compileerrormessage_){}
     , decltype(_impl_.runtimeerrormessage_){}
     , decltype(_impl_.output_){}
+    , decltype(_impl_.status_){0}
     , decltype(_impl_.compileerror_){false}
-    , decltype(_impl_.runtimeerror_){0u}
     , decltype(_impl_.timeused_){uint64_t{0u}}
-    , decltype(_impl_.memoryused_){0}
+    , decltype(_impl_.memoryused_){uint64_t{0u}}
+    , decltype(_impl_.runtimeerror_){0u}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.compileerrormessage_.InitDefault();
@@ -736,9 +793,9 @@ void SimpleReply::Clear() {
   _impl_.compileerrormessage_.ClearToEmpty();
   _impl_.runtimeerrormessage_.ClearToEmpty();
   _impl_.output_.ClearToEmpty();
-  ::memset(&_impl_.compileerror_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.memoryused_) -
-      reinterpret_cast<char*>(&_impl_.compileerror_)) + sizeof(_impl_.memoryused_));
+  ::memset(&_impl_.status_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&_impl_.runtimeerror_) -
+      reinterpret_cast<char*>(&_impl_.status_)) + sizeof(_impl_.runtimeerror_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -748,25 +805,34 @@ const char* SimpleReply::_InternalParse(const char* ptr, ::_pbi::ParseContext* c
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // bool compileError = 1;
+      // .WJudger.JudgeStatus status = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_status(static_cast<::WJudger::JudgeStatus>(val));
+        } else
+          goto handle_unusual;
+        continue;
+      // bool compileError = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
           _impl_.compileerror_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // uint32 runtimeError = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+      // uint32 runtimeError = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
           _impl_.runtimeerror_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // string compileErrorMessage = 3;
-      case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+      // string compileErrorMessage = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
           auto str = _internal_mutable_compileerrormessage();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
@@ -774,9 +840,9 @@ const char* SimpleReply::_InternalParse(const char* ptr, ::_pbi::ParseContext* c
         } else
           goto handle_unusual;
         continue;
-      // string runtimeErrorMessage = 4;
-      case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
+      // string runtimeErrorMessage = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 42)) {
           auto str = _internal_mutable_runtimeerrormessage();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
@@ -784,25 +850,25 @@ const char* SimpleReply::_InternalParse(const char* ptr, ::_pbi::ParseContext* c
         } else
           goto handle_unusual;
         continue;
-      // uint64 timeused = 5;
-      case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+      // uint64 timeused = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 48)) {
           _impl_.timeused_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // double memoryused = 6;
-      case 6:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 49)) {
-          _impl_.memoryused_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr);
-          ptr += sizeof(double);
+      // uint64 memoryused = 7;
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 56)) {
+          _impl_.memoryused_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // string output = 7;
-      case 7:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 58)) {
+      // string output = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 66)) {
           auto str = _internal_mutable_output();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
@@ -839,62 +905,65 @@ uint8_t* SimpleReply::_InternalSerialize(
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // bool compileError = 1;
+  // .WJudger.JudgeStatus status = 1;
+  if (this->_internal_status() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      1, this->_internal_status(), target);
+  }
+
+  // bool compileError = 2;
   if (this->_internal_compileerror() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteBoolToArray(1, this->_internal_compileerror(), target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(2, this->_internal_compileerror(), target);
   }
 
-  // uint32 runtimeError = 2;
+  // uint32 runtimeError = 3;
   if (this->_internal_runtimeerror() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteUInt32ToArray(2, this->_internal_runtimeerror(), target);
+    target = ::_pbi::WireFormatLite::WriteUInt32ToArray(3, this->_internal_runtimeerror(), target);
   }
 
-  // string compileErrorMessage = 3;
+  // string compileErrorMessage = 4;
   if (!this->_internal_compileerrormessage().empty()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_compileerrormessage().data(), static_cast<int>(this->_internal_compileerrormessage().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
       "WJudger.SimpleReply.compileErrorMessage");
     target = stream->WriteStringMaybeAliased(
-        3, this->_internal_compileerrormessage(), target);
+        4, this->_internal_compileerrormessage(), target);
   }
 
-  // string runtimeErrorMessage = 4;
+  // string runtimeErrorMessage = 5;
   if (!this->_internal_runtimeerrormessage().empty()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_runtimeerrormessage().data(), static_cast<int>(this->_internal_runtimeerrormessage().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
       "WJudger.SimpleReply.runtimeErrorMessage");
     target = stream->WriteStringMaybeAliased(
-        4, this->_internal_runtimeerrormessage(), target);
+        5, this->_internal_runtimeerrormessage(), target);
   }
 
-  // uint64 timeused = 5;
+  // uint64 timeused = 6;
   if (this->_internal_timeused() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(5, this->_internal_timeused(), target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(6, this->_internal_timeused(), target);
   }
 
-  // double memoryused = 6;
-  static_assert(sizeof(uint64_t) == sizeof(double), "Code assumes uint64_t and double are the same size.");
-  double tmp_memoryused = this->_internal_memoryused();
-  uint64_t raw_memoryused;
-  memcpy(&raw_memoryused, &tmp_memoryused, sizeof(tmp_memoryused));
-  if (raw_memoryused != 0) {
+  // uint64 memoryused = 7;
+  if (this->_internal_memoryused() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteDoubleToArray(6, this->_internal_memoryused(), target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(7, this->_internal_memoryused(), target);
   }
 
-  // string output = 7;
+  // string output = 8;
   if (!this->_internal_output().empty()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_output().data(), static_cast<int>(this->_internal_output().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
       "WJudger.SimpleReply.output");
     target = stream->WriteStringMaybeAliased(
-        7, this->_internal_output(), target);
+        8, this->_internal_output(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -913,49 +982,51 @@ size_t SimpleReply::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string compileErrorMessage = 3;
+  // string compileErrorMessage = 4;
   if (!this->_internal_compileerrormessage().empty()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
         this->_internal_compileerrormessage());
   }
 
-  // string runtimeErrorMessage = 4;
+  // string runtimeErrorMessage = 5;
   if (!this->_internal_runtimeerrormessage().empty()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
         this->_internal_runtimeerrormessage());
   }
 
-  // string output = 7;
+  // string output = 8;
   if (!this->_internal_output().empty()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
         this->_internal_output());
   }
 
-  // bool compileError = 1;
+  // .WJudger.JudgeStatus status = 1;
+  if (this->_internal_status() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_status());
+  }
+
+  // bool compileError = 2;
   if (this->_internal_compileerror() != 0) {
     total_size += 1 + 1;
   }
 
-  // uint32 runtimeError = 2;
-  if (this->_internal_runtimeerror() != 0) {
-    total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_runtimeerror());
-  }
-
-  // uint64 timeused = 5;
+  // uint64 timeused = 6;
   if (this->_internal_timeused() != 0) {
     total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_timeused());
   }
 
-  // double memoryused = 6;
-  static_assert(sizeof(uint64_t) == sizeof(double), "Code assumes uint64_t and double are the same size.");
-  double tmp_memoryused = this->_internal_memoryused();
-  uint64_t raw_memoryused;
-  memcpy(&raw_memoryused, &tmp_memoryused, sizeof(tmp_memoryused));
-  if (raw_memoryused != 0) {
-    total_size += 1 + 8;
+  // uint64 memoryused = 7;
+  if (this->_internal_memoryused() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_memoryused());
+  }
+
+  // uint32 runtimeError = 3;
+  if (this->_internal_runtimeerror() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_runtimeerror());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
@@ -985,21 +1056,20 @@ void SimpleReply::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PR
   if (!from._internal_output().empty()) {
     _this->_internal_set_output(from._internal_output());
   }
+  if (from._internal_status() != 0) {
+    _this->_internal_set_status(from._internal_status());
+  }
   if (from._internal_compileerror() != 0) {
     _this->_internal_set_compileerror(from._internal_compileerror());
-  }
-  if (from._internal_runtimeerror() != 0) {
-    _this->_internal_set_runtimeerror(from._internal_runtimeerror());
   }
   if (from._internal_timeused() != 0) {
     _this->_internal_set_timeused(from._internal_timeused());
   }
-  static_assert(sizeof(uint64_t) == sizeof(double), "Code assumes uint64_t and double are the same size.");
-  double tmp_memoryused = from._internal_memoryused();
-  uint64_t raw_memoryused;
-  memcpy(&raw_memoryused, &tmp_memoryused, sizeof(tmp_memoryused));
-  if (raw_memoryused != 0) {
+  if (from._internal_memoryused() != 0) {
     _this->_internal_set_memoryused(from._internal_memoryused());
+  }
+  if (from._internal_runtimeerror() != 0) {
+    _this->_internal_set_runtimeerror(from._internal_runtimeerror());
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -1033,11 +1103,11 @@ void SimpleReply::InternalSwap(SimpleReply* other) {
       &other->_impl_.output_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(SimpleReply, _impl_.memoryused_)
-      + sizeof(SimpleReply::_impl_.memoryused_)
-      - PROTOBUF_FIELD_OFFSET(SimpleReply, _impl_.compileerror_)>(
-          reinterpret_cast<char*>(&_impl_.compileerror_),
-          reinterpret_cast<char*>(&other->_impl_.compileerror_));
+      PROTOBUF_FIELD_OFFSET(SimpleReply, _impl_.runtimeerror_)
+      + sizeof(SimpleReply::_impl_.runtimeerror_)
+      - PROTOBUF_FIELD_OFFSET(SimpleReply, _impl_.status_)>(
+          reinterpret_cast<char*>(&_impl_.status_),
+          reinterpret_cast<char*>(&other->_impl_.status_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata SimpleReply::GetMetadata() const {

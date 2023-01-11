@@ -41,10 +41,6 @@ Judger::~Judger(){
 	safecall(rmdir, name.c_str());
 }
 
-bool Judger::token_match(std::string key){
-	return token == key;
-}
-
 void Judger::judge(const JudgeTask &task){
 	safecall(chdir, name.c_str());
 
@@ -117,6 +113,9 @@ static std::string getFdContent(int fd, size_t length = 4096){
 }
 
 void Judger::simple(const SimpleTask &task){
+	if(!task.check_token(token)){
+		return;
+	}
 	safecall(chdir, name.c_str());
 	auto sandbox = fetch_sandbox();
 	if(sandbox){
@@ -152,8 +151,9 @@ void Judger::simple(const SimpleTask &task){
 
 		sandbox->clean();
 		return_sandbox(std::move(sandbox));
+		task.set_status(STATUS_OK);
 	}else{
-		//TODO
+		task.set_status(STATUS_BUSY);
 	}
 	safecall(chdir, "..");
 }

@@ -100,6 +100,32 @@ inline bool JudgeReply_ResultType_Parse(
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<JudgeReply_ResultType>(
     JudgeReply_ResultType_descriptor(), name, value);
 }
+enum JudgeStatus : int {
+  OK = 0,
+  UNAUTHENTICATED = 1,
+  BUSY = 2,
+  JudgeStatus_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  JudgeStatus_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+};
+bool JudgeStatus_IsValid(int value);
+constexpr JudgeStatus JudgeStatus_MIN = OK;
+constexpr JudgeStatus JudgeStatus_MAX = BUSY;
+constexpr int JudgeStatus_ARRAYSIZE = JudgeStatus_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* JudgeStatus_descriptor();
+template<typename T>
+inline const std::string& JudgeStatus_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, JudgeStatus>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function JudgeStatus_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    JudgeStatus_descriptor(), enum_t_value);
+}
+inline bool JudgeStatus_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, JudgeStatus* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<JudgeStatus>(
+    JudgeStatus_descriptor(), name, value);
+}
 enum Language : int {
   C = 0,
   CPP = 1,
@@ -251,12 +277,13 @@ class SimpleArgs final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kTokenFieldNumber = 1,
-    kCodeFieldNumber = 2,
-    kInputFieldNumber = 4,
-    kLanguageFieldNumber = 3,
+    kTokenFieldNumber = 2,
+    kCodeFieldNumber = 3,
+    kInputFieldNumber = 5,
+    kJudgeridFieldNumber = 1,
+    kLanguageFieldNumber = 4,
   };
-  // string token = 1;
+  // string token = 2;
   void clear_token();
   const std::string& token() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -270,7 +297,7 @@ class SimpleArgs final :
   std::string* _internal_mutable_token();
   public:
 
-  // string code = 2;
+  // string code = 3;
   void clear_code();
   const std::string& code() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -284,7 +311,7 @@ class SimpleArgs final :
   std::string* _internal_mutable_code();
   public:
 
-  // string input = 4;
+  // string input = 5;
   void clear_input();
   const std::string& input() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -298,7 +325,16 @@ class SimpleArgs final :
   std::string* _internal_mutable_input();
   public:
 
-  // .WJudger.Language language = 3;
+  // uint32 judgerid = 1;
+  void clear_judgerid();
+  uint32_t judgerid() const;
+  void set_judgerid(uint32_t value);
+  private:
+  uint32_t _internal_judgerid() const;
+  void _internal_set_judgerid(uint32_t value);
+  public:
+
+  // .WJudger.Language language = 4;
   void clear_language();
   ::WJudger::Language language() const;
   void set_language(::WJudger::Language value);
@@ -318,6 +354,7 @@ class SimpleArgs final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr token_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr code_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr input_;
+    uint32_t judgerid_;
     int language_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
@@ -447,15 +484,16 @@ class SimpleReply final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kCompileErrorMessageFieldNumber = 3,
-    kRuntimeErrorMessageFieldNumber = 4,
-    kOutputFieldNumber = 7,
-    kCompileErrorFieldNumber = 1,
-    kRuntimeErrorFieldNumber = 2,
-    kTimeusedFieldNumber = 5,
-    kMemoryusedFieldNumber = 6,
+    kCompileErrorMessageFieldNumber = 4,
+    kRuntimeErrorMessageFieldNumber = 5,
+    kOutputFieldNumber = 8,
+    kStatusFieldNumber = 1,
+    kCompileErrorFieldNumber = 2,
+    kTimeusedFieldNumber = 6,
+    kMemoryusedFieldNumber = 7,
+    kRuntimeErrorFieldNumber = 3,
   };
-  // string compileErrorMessage = 3;
+  // string compileErrorMessage = 4;
   void clear_compileerrormessage();
   const std::string& compileerrormessage() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -469,7 +507,7 @@ class SimpleReply final :
   std::string* _internal_mutable_compileerrormessage();
   public:
 
-  // string runtimeErrorMessage = 4;
+  // string runtimeErrorMessage = 5;
   void clear_runtimeerrormessage();
   const std::string& runtimeerrormessage() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -483,7 +521,7 @@ class SimpleReply final :
   std::string* _internal_mutable_runtimeerrormessage();
   public:
 
-  // string output = 7;
+  // string output = 8;
   void clear_output();
   const std::string& output() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -497,7 +535,16 @@ class SimpleReply final :
   std::string* _internal_mutable_output();
   public:
 
-  // bool compileError = 1;
+  // .WJudger.JudgeStatus status = 1;
+  void clear_status();
+  ::WJudger::JudgeStatus status() const;
+  void set_status(::WJudger::JudgeStatus value);
+  private:
+  ::WJudger::JudgeStatus _internal_status() const;
+  void _internal_set_status(::WJudger::JudgeStatus value);
+  public:
+
+  // bool compileError = 2;
   void clear_compileerror();
   bool compileerror() const;
   void set_compileerror(bool value);
@@ -506,16 +553,7 @@ class SimpleReply final :
   void _internal_set_compileerror(bool value);
   public:
 
-  // uint32 runtimeError = 2;
-  void clear_runtimeerror();
-  uint32_t runtimeerror() const;
-  void set_runtimeerror(uint32_t value);
-  private:
-  uint32_t _internal_runtimeerror() const;
-  void _internal_set_runtimeerror(uint32_t value);
-  public:
-
-  // uint64 timeused = 5;
+  // uint64 timeused = 6;
   void clear_timeused();
   uint64_t timeused() const;
   void set_timeused(uint64_t value);
@@ -524,13 +562,22 @@ class SimpleReply final :
   void _internal_set_timeused(uint64_t value);
   public:
 
-  // double memoryused = 6;
+  // uint64 memoryused = 7;
   void clear_memoryused();
-  double memoryused() const;
-  void set_memoryused(double value);
+  uint64_t memoryused() const;
+  void set_memoryused(uint64_t value);
   private:
-  double _internal_memoryused() const;
-  void _internal_set_memoryused(double value);
+  uint64_t _internal_memoryused() const;
+  void _internal_set_memoryused(uint64_t value);
+  public:
+
+  // uint32 runtimeError = 3;
+  void clear_runtimeerror();
+  uint32_t runtimeerror() const;
+  void set_runtimeerror(uint32_t value);
+  private:
+  uint32_t _internal_runtimeerror() const;
+  void _internal_set_runtimeerror(uint32_t value);
   public:
 
   // @@protoc_insertion_point(class_scope:WJudger.SimpleReply)
@@ -544,10 +591,11 @@ class SimpleReply final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr compileerrormessage_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr runtimeerrormessage_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr output_;
+    int status_;
     bool compileerror_;
-    uint32_t runtimeerror_;
     uint64_t timeused_;
-    double memoryused_;
+    uint64_t memoryused_;
+    uint32_t runtimeerror_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1371,7 +1419,27 @@ class ExecuteResult final :
 #endif  // __GNUC__
 // SimpleArgs
 
-// string token = 1;
+// uint32 judgerid = 1;
+inline void SimpleArgs::clear_judgerid() {
+  _impl_.judgerid_ = 0u;
+}
+inline uint32_t SimpleArgs::_internal_judgerid() const {
+  return _impl_.judgerid_;
+}
+inline uint32_t SimpleArgs::judgerid() const {
+  // @@protoc_insertion_point(field_get:WJudger.SimpleArgs.judgerid)
+  return _internal_judgerid();
+}
+inline void SimpleArgs::_internal_set_judgerid(uint32_t value) {
+  
+  _impl_.judgerid_ = value;
+}
+inline void SimpleArgs::set_judgerid(uint32_t value) {
+  _internal_set_judgerid(value);
+  // @@protoc_insertion_point(field_set:WJudger.SimpleArgs.judgerid)
+}
+
+// string token = 2;
 inline void SimpleArgs::clear_token() {
   _impl_.token_.ClearToEmpty();
 }
@@ -1421,7 +1489,7 @@ inline void SimpleArgs::set_allocated_token(std::string* token) {
   // @@protoc_insertion_point(field_set_allocated:WJudger.SimpleArgs.token)
 }
 
-// string code = 2;
+// string code = 3;
 inline void SimpleArgs::clear_code() {
   _impl_.code_.ClearToEmpty();
 }
@@ -1471,7 +1539,7 @@ inline void SimpleArgs::set_allocated_code(std::string* code) {
   // @@protoc_insertion_point(field_set_allocated:WJudger.SimpleArgs.code)
 }
 
-// .WJudger.Language language = 3;
+// .WJudger.Language language = 4;
 inline void SimpleArgs::clear_language() {
   _impl_.language_ = 0;
 }
@@ -1491,7 +1559,7 @@ inline void SimpleArgs::set_language(::WJudger::Language value) {
   // @@protoc_insertion_point(field_set:WJudger.SimpleArgs.language)
 }
 
-// string input = 4;
+// string input = 5;
 inline void SimpleArgs::clear_input() {
   _impl_.input_.ClearToEmpty();
 }
@@ -1545,7 +1613,27 @@ inline void SimpleArgs::set_allocated_input(std::string* input) {
 
 // SimpleReply
 
-// bool compileError = 1;
+// .WJudger.JudgeStatus status = 1;
+inline void SimpleReply::clear_status() {
+  _impl_.status_ = 0;
+}
+inline ::WJudger::JudgeStatus SimpleReply::_internal_status() const {
+  return static_cast< ::WJudger::JudgeStatus >(_impl_.status_);
+}
+inline ::WJudger::JudgeStatus SimpleReply::status() const {
+  // @@protoc_insertion_point(field_get:WJudger.SimpleReply.status)
+  return _internal_status();
+}
+inline void SimpleReply::_internal_set_status(::WJudger::JudgeStatus value) {
+  
+  _impl_.status_ = value;
+}
+inline void SimpleReply::set_status(::WJudger::JudgeStatus value) {
+  _internal_set_status(value);
+  // @@protoc_insertion_point(field_set:WJudger.SimpleReply.status)
+}
+
+// bool compileError = 2;
 inline void SimpleReply::clear_compileerror() {
   _impl_.compileerror_ = false;
 }
@@ -1565,7 +1653,7 @@ inline void SimpleReply::set_compileerror(bool value) {
   // @@protoc_insertion_point(field_set:WJudger.SimpleReply.compileError)
 }
 
-// uint32 runtimeError = 2;
+// uint32 runtimeError = 3;
 inline void SimpleReply::clear_runtimeerror() {
   _impl_.runtimeerror_ = 0u;
 }
@@ -1585,7 +1673,7 @@ inline void SimpleReply::set_runtimeerror(uint32_t value) {
   // @@protoc_insertion_point(field_set:WJudger.SimpleReply.runtimeError)
 }
 
-// string compileErrorMessage = 3;
+// string compileErrorMessage = 4;
 inline void SimpleReply::clear_compileerrormessage() {
   _impl_.compileerrormessage_.ClearToEmpty();
 }
@@ -1635,7 +1723,7 @@ inline void SimpleReply::set_allocated_compileerrormessage(std::string* compilee
   // @@protoc_insertion_point(field_set_allocated:WJudger.SimpleReply.compileErrorMessage)
 }
 
-// string runtimeErrorMessage = 4;
+// string runtimeErrorMessage = 5;
 inline void SimpleReply::clear_runtimeerrormessage() {
   _impl_.runtimeerrormessage_.ClearToEmpty();
 }
@@ -1685,7 +1773,7 @@ inline void SimpleReply::set_allocated_runtimeerrormessage(std::string* runtimee
   // @@protoc_insertion_point(field_set_allocated:WJudger.SimpleReply.runtimeErrorMessage)
 }
 
-// uint64 timeused = 5;
+// uint64 timeused = 6;
 inline void SimpleReply::clear_timeused() {
   _impl_.timeused_ = uint64_t{0u};
 }
@@ -1705,27 +1793,27 @@ inline void SimpleReply::set_timeused(uint64_t value) {
   // @@protoc_insertion_point(field_set:WJudger.SimpleReply.timeused)
 }
 
-// double memoryused = 6;
+// uint64 memoryused = 7;
 inline void SimpleReply::clear_memoryused() {
-  _impl_.memoryused_ = 0;
+  _impl_.memoryused_ = uint64_t{0u};
 }
-inline double SimpleReply::_internal_memoryused() const {
+inline uint64_t SimpleReply::_internal_memoryused() const {
   return _impl_.memoryused_;
 }
-inline double SimpleReply::memoryused() const {
+inline uint64_t SimpleReply::memoryused() const {
   // @@protoc_insertion_point(field_get:WJudger.SimpleReply.memoryused)
   return _internal_memoryused();
 }
-inline void SimpleReply::_internal_set_memoryused(double value) {
+inline void SimpleReply::_internal_set_memoryused(uint64_t value) {
   
   _impl_.memoryused_ = value;
 }
-inline void SimpleReply::set_memoryused(double value) {
+inline void SimpleReply::set_memoryused(uint64_t value) {
   _internal_set_memoryused(value);
   // @@protoc_insertion_point(field_set:WJudger.SimpleReply.memoryused)
 }
 
-// string output = 7;
+// string output = 8;
 inline void SimpleReply::clear_output() {
   _impl_.output_.ClearToEmpty();
 }
@@ -2450,6 +2538,11 @@ template <> struct is_proto_enum< ::WJudger::JudgeReply_ResultType> : ::std::tru
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::WJudger::JudgeReply_ResultType>() {
   return ::WJudger::JudgeReply_ResultType_descriptor();
+}
+template <> struct is_proto_enum< ::WJudger::JudgeStatus> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::WJudger::JudgeStatus>() {
+  return ::WJudger::JudgeStatus_descriptor();
 }
 template <> struct is_proto_enum< ::WJudger::Language> : ::std::true_type {};
 template <>

@@ -43,8 +43,10 @@ class SimpleTask{
 		virtual void set_compileerror(std::string) const = 0;
 		virtual void set_runtimeerror(std::string) const = 0;
 		virtual void set_timeused(long long) const = 0;
-		virtual void set_memoryused(double) const = 0;
+		virtual void set_memoryused(long long) const = 0;
 		virtual void set_output(std::string) const = 0;
+		virtual bool check_token(std::string) const = 0;
+		virtual void set_status(uint32_t) const = 0;
 	private:
 };
 

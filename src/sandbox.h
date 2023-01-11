@@ -29,7 +29,7 @@ class ExecuteData{
 	int status;
 	int signal;
 	long long time_used;
-	double memory_used;
+	long long memory_used;
 	bool re() const{
 		if(ifexited && status == 0) return false;
 		else return true;

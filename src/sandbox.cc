@@ -268,6 +268,6 @@ ExecuteData Sandbox::execute_program(int exe_id, std::vector<std::pair<int, int>
 	if(data.ifexited) data.status = WEXITSTATUS(status);
 	if(data.ifsignaled) data.signal = WTERMSIG(status);
 	data.time_used = usage.ru_utime.tv_sec * (1000ll) + usage.ru_utime.tv_usec/1000;
-	data.memory_used = usage.ru_maxrss / (double)1024;
+	data.memory_used = usage.ru_maxrss;
 	return data;
 }

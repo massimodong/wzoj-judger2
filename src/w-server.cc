@@ -69,13 +69,35 @@ class SimpleGrpcTask final: public SimpleTask{
 		reply->set_timeused(t);
 	}
 
-	void set_memoryused(double m) const override{
+	void set_memoryused(long long m) const override{
 		reply->set_memoryused(m);
 	}
 
 	void set_output(std::string o) const override{
 		reply->set_output(o);
 	}
+
+	bool check_token(std::string t) const override{
+		bool ret = t == args->token();
+		if(!ret){
+			reply->set_status(JudgeStatus::UNAUTHENTICATED);
+		}
+		return ret;
+	}
+
+	void set_status(uint32_t status) const override{
+		switch(status){
+			case STATUS_OK:
+				reply->set_status(JudgeStatus::OK);
+				break;
+			case STATUS_BUSY:
+				reply->set_status(JudgeStatus::BUSY);
+				break;
+			default:
+				LOG(FATAL)<<"invalid status";
+		}
+	}
+
 	private:
 		const SimpleArgs *args;
 		SimpleReply *reply;
@@ -93,12 +115,13 @@ class WJudgerImpl final : public WJudger::WJudger::Service {
 	Status Judge(ServerContext *context, const JudgeArgs *args, ServerWriter<JudgeReply> *writer) override {
 		safecall(unshare, CLONE_FS);
 
+		/*
 		for(Judger &judger: *judgers){
 			if(judger.token_match("123456")){ //TODO: add token in args
 				judger.judge(GrpcTask(args, writer));
 				return Status::OK;
 			}
-		}
+		}*/
 		const JudgeReply reply;//TODO: reply no match
 		writer->Write(reply);
 		return Status::OK;
@@ -106,13 +129,14 @@ class WJudgerImpl final : public WJudger::WJudger::Service {
 
 	Status Simple(ServerContext *context, const SimpleArgs *args, SimpleReply *reply) override{
 		safecall(unshare, CLONE_FS);
-		for(Judger &judger: *judgers){
-			if(judger.token_match(args->token())){
-				judger.simple(SimpleGrpcTask(args, reply));
-				return Status::OK;
-			}
+
+		if(args->judgerid() < judgers->size()){
+			Judger &judger = (*judgers)[args->judgerid()];
+			judger.simple(SimpleGrpcTask(args, reply));
+			return Status::OK;
+		}else{
+			return Status(StatusCode::INVALID_ARGUMENT, "judgerid is not valid");
 		}
-		return Status(StatusCode::UNAUTHENTICATED, "Invalid token");
 	}
 };
 

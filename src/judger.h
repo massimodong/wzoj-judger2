@@ -25,6 +25,10 @@
 #include "judge-task.h"
 #include "sandbox.h"
 
+#define STATUS_OK 0
+#define STATUS_UNAUTHENTICATED 1
+#define STATUS_BUSY 2
+
 class Judger
 {
 public:
@@ -35,7 +39,6 @@ public:
 	Judger &operator =(const Judger &) = delete;
 	~Judger();
 
-	bool token_match(std::string);
 	void judge(const JudgeTask &);
 	void simple(const SimpleTask &);
 protected:
