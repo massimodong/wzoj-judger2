@@ -135,7 +135,7 @@ class WJudgerImpl final : public WJudger::WJudger::Service {
 			judger.simple(SimpleGrpcTask(args, reply));
 			return Status::OK;
 		}else{
-			return Status(StatusCode::INVALID_ARGUMENT, "judgerid is not valid");
+			return Status(StatusCode::NOT_FOUND, "judger not found");
 		}
 	}
 };
