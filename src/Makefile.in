@@ -89,7 +89,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = wzoj_judger2$(EXEEXT)
+bin_PROGRAMS = wzoj_judger2_launcher$(EXEEXT) wzoj_judger2$(EXEEXT)
 subdir = src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -157,6 +157,9 @@ am__v_lt_1 =
 wzoj_judger2_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(wzoj_judger2_CXXFLAGS) \
 	$(CXXFLAGS) $(wzoj_judger2_LDFLAGS) $(LDFLAGS) -o $@
+am_wzoj_judger2_launcher_OBJECTS = wlauncher.$(OBJEXT)
+wzoj_judger2_launcher_OBJECTS = $(am_wzoj_judger2_launcher_OBJECTS)
+wzoj_judger2_launcher_DEPENDENCIES = $(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -173,6 +176,7 @@ DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/libwjudger_seccomp_loader.Po \
+	./$(DEPDIR)/wlauncher.Po \
 	./$(DEPDIR)/wzoj_judger2-judge-task.Po \
 	./$(DEPDIR)/wzoj_judger2-judger.Po \
 	./$(DEPDIR)/wzoj_judger2-main.Po \
@@ -218,9 +222,9 @@ am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
 SOURCES = $(libwjudger_seccomp_loader_a_SOURCES) \
-	$(wzoj_judger2_SOURCES)
+	$(wzoj_judger2_SOURCES) $(wzoj_judger2_launcher_SOURCES)
 DIST_SOURCES = $(libwjudger_seccomp_loader_a_SOURCES) \
-	$(wzoj_judger2_SOURCES)
+	$(wzoj_judger2_SOURCES) $(wzoj_judger2_launcher_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -305,6 +309,8 @@ LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
+LIBSECCOMP_CFLAGS = @LIBSECCOMP_CFLAGS@
+LIBSECCOMP_LIBS = @LIBSECCOMP_LIBS@
 LIBTOOL = @LIBTOOL@
 LIPO = @LIPO@
 LN_S = @LN_S@
@@ -407,16 +413,32 @@ top_srcdir = @top_srcdir@
 AM_CPPFLAGS = \
 	-DPACKAGE_LOCALE_DIR=\""$(localedir)"\" \
 	-DPACKAGE_SRC_DIR=\""$(srcdir). \
+	$(LIBSECCOMP_CFLAGS). \
+	$(WZOJ_JUDGER2_CFLAGS). \
+	$(WZOJ_JUDGER2_CFLAGS). \
+	$(WZOJ_JUDGER2_CFLAGS). \
+	$(LIBSECCOMP_CFLAGS). \
+	$(libseccomp_CFLAGS). \
+	$(LIBSECCOMP_CFLAGS). \
+	$(WZOJ_JUDGER2_CFLAGS). \
+	$(libseccomp_CFLAGS). \
+	$(LIBSECCOMP_CFLAGS).. \
+	$(libseccomp_CFLAGS). \
 	$(hiredis_CFLAGS). \
 	$(LIBCURL_CFLAGS). \
 	$(libcurl_CFLAGS)"\" \
-	-DPACKAGE_DATA_DIR=\""$(pkgdatadir)"\" \
-	$(WZOJ_JUDGER2_CFLAGS)
+	-DPACKAGE_DATA_DIR=\""$(pkgdatadir)"\"
 
 AM_CFLAGS = \
 	 -Wall\
 	 -g
 
+wzoj_judger2_launcher_SOURCES = \
+	wlauncher.cc \
+	syscall_whitelist.h \
+	jail.h
+
+wzoj_judger2_launcher_LDADD = $(LIBSECCOMP_LIBS) 
 wzoj_judger2_SOURCES = \
 	main.cc \
 	common.h \
@@ -432,16 +454,18 @@ wzoj_judger2_SOURCES = \
 	judge-task.h \
 	sandbox.cc \
 	sandbox.h \
-	syscall_whitelist.h
+	syscall_whitelist.h \
+	jail.h
 
 wzoj_judger2_CXXFLAGS = -lpthread 
 wzoj_judger2_LDFLAGS = 
-wzoj_judger2_LDADD = $(WZOJ_JUDGER2_LIBS)
+wzoj_judger2_LDADD = $(WZOJ_JUDGER2_LIBS) 
 lib_LIBRARIES = \
 	libwjudger_seccomp_loader.a
 
 libwjudger_seccomp_loader_a_SOURCES = \
-	libwjudger_seccomp_loader.c
+	libwjudger_seccomp_loader.c \
+	syscall_whitelist.h
 
 all: all-am
 
@@ -566,6 +590,10 @@ wzoj_judger2$(EXEEXT): $(wzoj_judger2_OBJECTS) $(wzoj_judger2_DEPENDENCIES) $(EX
 	@rm -f wzoj_judger2$(EXEEXT)
 	$(AM_V_CXXLD)$(wzoj_judger2_LINK) $(wzoj_judger2_OBJECTS) $(wzoj_judger2_LDADD) $(LIBS)
 
+wzoj_judger2_launcher$(EXEEXT): $(wzoj_judger2_launcher_OBJECTS) $(wzoj_judger2_launcher_DEPENDENCIES) $(EXTRA_wzoj_judger2_launcher_DEPENDENCIES) 
+	@rm -f wzoj_judger2_launcher$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(wzoj_judger2_launcher_OBJECTS) $(wzoj_judger2_launcher_LDADD) $(LIBS)
+
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 
@@ -573,6 +601,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libwjudger_seccomp_loader.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wlauncher.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wzoj_judger2-judge-task.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wzoj_judger2-judger.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wzoj_judger2-main.Po@am__quote@ # am--include-marker
@@ -861,6 +890,7 @@ clean-am: clean-binPROGRAMS clean-generic clean-libLIBRARIES \
 
 distclean: distclean-am
 		-rm -f ./$(DEPDIR)/libwjudger_seccomp_loader.Po
+	-rm -f ./$(DEPDIR)/wlauncher.Po
 	-rm -f ./$(DEPDIR)/wzoj_judger2-judge-task.Po
 	-rm -f ./$(DEPDIR)/wzoj_judger2-judger.Po
 	-rm -f ./$(DEPDIR)/wzoj_judger2-main.Po
@@ -914,6 +944,7 @@ installcheck-am:
 
 maintainer-clean: maintainer-clean-am
 		-rm -f ./$(DEPDIR)/libwjudger_seccomp_loader.Po
+	-rm -f ./$(DEPDIR)/wlauncher.Po
 	-rm -f ./$(DEPDIR)/wzoj_judger2-judge-task.Po
 	-rm -f ./$(DEPDIR)/wzoj_judger2-judger.Po
 	-rm -f ./$(DEPDIR)/wzoj_judger2-main.Po

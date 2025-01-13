@@ -49,8 +49,6 @@ extern int OJ_CNT_WORKERS;
 extern const char *OJ_URL;
 extern const char *OJ_TOKEN;
 
-const int JUDGER_UID = 1537;
-
 const uint64_t STD_MB = 1048576;
 const int OJ_LANGUAGE_C = 0;
 const int OJ_LANGUAGE_CPP = 1;

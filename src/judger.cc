@@ -113,6 +113,7 @@ static std::string getFdContent(int fd, size_t length = 4096){
 }
 
 void Judger::simple(const SimpleTask &task){
+	task.set_status(STATUS_OK);
 	if(!task.check_token(token)){
 		return;
 	}
@@ -151,7 +152,6 @@ void Judger::simple(const SimpleTask &task){
 
 		sandbox->clean();
 		return_sandbox(std::move(sandbox));
-		task.set_status(STATUS_OK);
 	}else{
 		task.set_status(STATUS_BUSY);
 	}

@@ -18,11 +18,10 @@
  */
 
 #include "sandbox.h"
-#include "syscall_whitelist.h"
+#include "jail.h"
 #include <filesystem>
 #include <sys/resource.h>
 #include <sys/mman.h>
-#include <seccomp.h>
 
 const static uint64_t COMPILE_TIME = 60;
 const static uint64_t COMPILE_FILE_SIZE = 10 * STD_MB;
@@ -34,6 +33,7 @@ const static uint64_t SIMPLE_MEMORY = 1024 * STD_MB;
 const static uint64_t RUN_FILE_SIZE = 2048 * STD_MB;
 
 #define LIB_WJUDGER_SECCOMP_LOADER_PATH "/home/massimo/W/proj/wzoj-judger2/Debug/src/libwjudger_seccomp_loader.a"
+#define WLAUNCHER_PATH "/home/massimo/W/proj/wzoj-judger2/Debug/src/wzoj_judger2_launcher"
 
 #define BINDDIRS(ACTION)\
 	ACTION("bin");\
@@ -155,12 +155,6 @@ static void setlimits(uint64_t time, uint64_t memory, uint64_t file_size){
 	}
 
 	//safecall(alarm, time); //TODO: enable alarm
-
-	safecall(chroot, "./");
-
-	safecall(setgid, JUDGER_UID);
-	safecall(setuid, JUDGER_UID);
-	safecall(setresuid, JUDGER_UID, JUDGER_UID, JUDGER_UID);
 }
 
 [[ noreturn ]] static void executeCompile(int language, int fd_ce){
@@ -187,6 +181,7 @@ static void setlimits(uint64_t time, uint64_t memory, uint64_t file_size){
 		dup2(fd_ce, 2);
 	}
 	setlimits(COMPILE_TIME, COMPILE_MEMORY, COMPILE_FILE_SIZE);
+	jail();
 	safecall(execvp, CP[language][0], CP[language]);
 	LOG(FATAL)<<"should not reach here";
 }
@@ -224,20 +219,17 @@ int Sandbox::raw_compile(int language, int fd_ce){
 	return id;
 }
 
-#define WJUDGER_SYSCALL_ALLOW(s) seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(s), 0)
-static void apply_seccomp(){
-	scmp_filter_ctx ctx = seccomp_init(SCMP_ACT_TRAP);
-	if(ctx == NULL) LOG(FATAL)<<"ceccomp_init failed";
 
-	SYSCALL_ALLOWED_ALL(WJUDGER_SYSCALL_ALLOW); //TODO: check return value of seccomp_rule_add
 
-	int load_res = seccomp_load(ctx);
-	if(load_res) LOG(FATAL)<<"load seccomp contex failed";
-	seccomp_release(ctx);
-}
+[[ noreturn ]] static void spawnedProcess(const char *exe, std::vector<std::pair<int, int>> mappings, int status_fd){
+	char fd_str[30];
+	const char *Main[] = { WLAUNCHER_PATH, exe, fd_str, NULL };
 
-[[ noreturn ]] static void spawnedProcess(const char *exe, std::vector<std::pair<int, int>> mappings){
-	const char * Main[] = { exe, NULL };
+	int snret = snprintf(fd_str, sizeof(fd_str), "%d", status_fd);
+	if(snret >= sizeof(fd_str)){
+		LOG(FATAL)<<"error converting integer to string";
+	}
+
 	safecall(chdir, "./run");
 
 	for(auto p: mappings){
@@ -246,22 +238,41 @@ static void apply_seccomp(){
 	}
 
 	setlimits(SIMPLE_TIME, SIMPLE_MEMORY, RUN_FILE_SIZE);
-	apply_seccomp();
+	//jail();
+	//apply_seccomp();
 	safecall(execvp, Main[0], (char * const *)Main);
 	LOG(FATAL)<<"Should not reach here";
 }
 
 ExecuteData Sandbox::execute_program(int exe_id, std::vector<std::pair<int, int>> mappings){
 	ExecuteData data;
+	int status_pipefd[2];
+	safecall(pipe, status_pipefd);
+
 	pid_t pid = fork_safe();
 	if(pid == 0){
-		spawnedProcess(("./" + executable_files[exe_id]).c_str(), mappings);
+		safecall(close, status_pipefd[0]);
+		spawnedProcess(("./" + executable_files[exe_id]).c_str(), mappings, status_pipefd[1]);
 		LOG(FATAL)<<"Should not reach here";
 	}
 
 	int status = 0;
 	struct rusage usage;
-	safecall(wait4, pid, &status, 0, &usage);
+
+	safecall(close, status_pipefd[1]);
+	ssize_t read_ret = read(status_pipefd[0], &status, sizeof(status));
+	if(read_ret != sizeof(status)){
+		LOG(FATAL)<<"read execute status error!";
+	}
+	read_ret = read(status_pipefd[0], &usage, sizeof(usage));
+	if(read_ret != sizeof(usage)){
+		LOG(FATAL)<<"read execute usage error!";
+	}
+	safecall(close, status_pipefd[0]);
+
+	int launcher_status = 0;
+	safecall(waitpid, pid, &launcher_status, 0);
+	//TODO: check launcher status
 
 	data.ifexited = WIFEXITED(status);
 	data.ifsignaled = WIFSIGNALED(status);
